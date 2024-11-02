@@ -1,0 +1,30 @@
+
+
+.mat-toolbar{
+  background-color: lightgrey!important;
+}
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+
+.example-container {
+  width: 100%;
+  height: calc(100% - 64px);
+
+}
+
+.example-sidenav-content {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.example-sidenav {
+  width: auto;
+  background-color: lightgrey;
+  border-radius: 0!important;
+  padding: 20px 10px;
+}
