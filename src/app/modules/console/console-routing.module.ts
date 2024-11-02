@@ -11,7 +11,7 @@ const routes: Routes = [
           {path:'',redirectTo:'plain-task',pathMatch:'full'},
           {path:'plain-task',loadComponent:()=>import('./components/console-dashboard/components/plain-tasks/plain-tasks.component').then(c => c.PlainTasksComponent)},
           {path:'plain-task-plus-constructivism',loadComponent:()=>import('./components/console-dashboard/components/plain-tasks-plus-constructivism/plain-tasks-plus-constructivism.component').then(c => c.PlainTasksPlusConstructivismComponent)},
-          {path:'plain-task-plus-constructivism-plus-attention',loadComponent:()=>import('./components/console-dashboard/components/plain-tasks-plus-constructivism-plus-attention-monitoring-and-reallocating/plain-tasks-plus-constructivism-plus-attention-monitoring-and-reallocating.component').then(c => c.PlainTasksPlusConstructivismPlusAttentionMonitoringAndReallocatingComponent)},
+          {path:'plain-task-plus-constructivism-plus-attention',loadComponent:()=>import('./components/console-dashboard/components/attention-reallocation/attention-reallocation.component').then(c => c.AttentionReallocationComponent)},
         ]
       }
     ]
