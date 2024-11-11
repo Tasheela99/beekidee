@@ -9,7 +9,7 @@
 
 
 .example-container {
-  width: 100%;
+
   height: calc(100% - 64px);
 
 }
@@ -17,8 +17,8 @@
 .example-sidenav-content {
   display: flex;
   height: 100%;
-  align-items: center;
-  justify-content: center;
+  //align-items: center;
+  //justify-content: center;
   flex-direction: column;
 }
 
