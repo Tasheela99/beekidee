@@ -48,7 +48,7 @@
     </div>
     <div class="row mb-4">
       <div class="col-12 col-lg-3 boys">
-        <mat-card appearance="outlined" class="py-2">
+        <mat-card appearance="outlined" class="">
           <mat-card-content>
             <div id="chart-boys">
               <apx-chart
@@ -67,7 +67,7 @@
 
       </div>
       <div class="col-12 col-lg-3  girls">
-        <mat-card appearance="outlined" class="py-2">
+        <mat-card appearance="outlined" class="">
           <mat-card-content>
             <div id="chart-girls">
               <apx-chart
@@ -116,7 +116,7 @@
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
               </table>
 
-              <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+              <mat-paginator [pageSizeOptions]="[3, 5, 10, 20]"
                              showFirstLastButtons
                              aria-label="Select page of periodic elements">
               </mat-paginator>
