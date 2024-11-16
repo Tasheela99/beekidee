@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {
-  Auth,
-  GoogleAuthProvider,
+  Auth, getAuth,
+  GoogleAuthProvider, signInWithEmailAndPassword,
   signInWithPopup,
   UserCredential
 } from '@angular/fire/auth';
@@ -31,9 +31,9 @@ interface UserData {
 export class AuthService {
   private currentUserSubject = new BehaviorSubject<UserData | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
+  auth = inject(Auth);
 
   constructor(
-    private auth: Auth,
     private firestore: Firestore
   ) {
     this.auth.onAuthStateChanged(async (user) => {
@@ -49,6 +49,8 @@ export class AuthService {
         this.currentUserSubject.next(null);
       }
     });
+
+    this.auth = getAuth();
   }
 
   async signInWithGoogle(): Promise<UserCredential> {
@@ -129,5 +131,10 @@ export class AuthService {
       console.error('Error signing out:', error);
       throw error;
     }
+  }
+
+
+  signIn(email:any,password:any){
+    return signInWithEmailAndPassword(this.auth,email,password);
   }
 }
