@@ -32,6 +32,7 @@ import {
   MatTable, MatTableDataSource
 } from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
+import {CurrencyPipe} from "@angular/common";
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -110,7 +111,8 @@ export type BarChartOptions = {
     MatRow,
     MatHeaderRowDef,
     MatRowDef,
-    MatPaginator
+    MatPaginator,
+    CurrencyPipe
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'

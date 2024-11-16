@@ -1,22 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  CdkDropListGroup,
-  moveItemInArray,
-  transferArrayItem
-} from "@angular/cdk/drag-drop";
+import {Component, inject, OnInit} from '@angular/core';
+import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
 import {YOUTUBE_PLAYER_CONFIG, YouTubePlayer} from "@angular/youtube-player";
 import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle
-} from "@angular/material/expansion";
+import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
+import {AnimationDialogComponent} from "../../../../../../components/animation-dialog/animation-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-plain-tasks',
@@ -60,6 +50,8 @@ export class PlainTasksComponent{
   isStarted = false;
   isAnswerCorrect = false;
 
+  dialog = inject(MatDialog);
+
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
@@ -87,20 +79,54 @@ export class PlainTasksComponent{
     }
   }
 
-  setAlerts(answer:boolean){
+  // setAlerts(answer:boolean){
+  //   if (answer) {
+  //     console.log(`${this.searchItem} is available in the items array.`);
+  //     this.isAnswerCorrect = true;
+  //
+  //     setTimeout(() => {
+  //       this.moveToNext()
+  //     }, 1000);
+  //
+  //   } else {
+  //     console.log(`${this.searchItem} is not available in the items array.`);
+  //   }
+  // }
+
+  setAlerts(answer: boolean) {
     if (answer) {
       console.log(`${this.searchItem} is available in the items array.`);
       this.isAnswerCorrect = true;
 
+      this.openAnimationDialog(true, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fhappy-start.webm?alt=media&token=f369ae30-66d3-4642-9c03-8405c18bf203');
+
       setTimeout(() => {
-        this.moveToNext()
-      }, 1000);
+        this.moveToNext();
+      }, 3000);
 
     } else {
       console.log(`${this.searchItem} is not available in the items array.`);
+      this.openAnimationDialog(false, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fnot-correct.webm?alt=media&token=fc447df6-587a-4429-a56e-9f178fe12073');
     }
-
   }
+
+  private openAnimationDialog(isCorrect: boolean, animationUrl: string): void {
+    const dialogRef = this.dialog.open(AnimationDialogComponent, {
+      maxWidth: '100vw',
+      maxHeight: '100vh',
+      height: '100vh',
+      width: '100vw',
+      panelClass: 'fullscreen-dialog',
+      data: { isCorrect, animationUrl }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Animation dialog closed');
+    });
+  }
+
+  //
+
 
 
   dataList:any = [

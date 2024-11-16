@@ -123,3 +123,19 @@
   flex-shrink: 0;
   border-radius: 4px;
 }
+
+
+.fullscreen-dialog .mat-mdc-dialog-container {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.fullscreen-dialog {
+  background: transparent;
+}
+
+.fullscreen-dialog .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
