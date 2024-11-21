@@ -28,7 +28,7 @@ jobs:
       # Step 4: Build the Angular app
       - name: Build the Angular app
         run: |
-          npm run build --configuration production
+          ng build --configuration production
 
       # Step 5: Set up Firebase CLI
       - name: Set up Firebase CLI
