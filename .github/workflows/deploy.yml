@@ -12,11 +12,11 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # Step 2: Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
           node-version: '18'  # Use the Node.js version you are using for your app
 
@@ -25,18 +25,23 @@ jobs:
         run: |
           npm install
 
-      # Step 4: Build the Angular app
+      # Step 4: Install Angular CLI globally
+      - name: Install Angular CLI
+        run: |
+          npm install -g @angular/cli
+
+      # Step 5: Build the Angular app
       - name: Build the Angular app
         run: |
           ng build --configuration production
 
-      # Step 5: Set up Firebase CLI
+      # Step 6: Set up Firebase CLI
       - name: Set up Firebase CLI
         run: |
           curl -sL https://firebase.tools | bash
           firebase --version
 
-      # Step 6: Deploy to Firebase
+      # Step 7: Deploy to Firebase
       - name: Deploy to Firebase
         run: |
           firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
