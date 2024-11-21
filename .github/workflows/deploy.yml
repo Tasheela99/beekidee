@@ -1,6 +1,5 @@
 name: Deploy to Firebase
 
-# Trigger the action on push to the main branch
 on:
   push:
     branches:
@@ -13,11 +12,11 @@ jobs:
     steps:
       # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'  # Use the Node.js version you are using for your app
 
@@ -33,11 +32,11 @@ jobs:
 
       # Step 5: Set up Firebase CLI
       - name: Set up Firebase CLI
-        uses: firebase-actions/setup-firebase@v2
-        with:
-          firebase-token: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          curl -sL https://firebase.tools | bash
+          firebase --version
 
       # Step 6: Deploy to Firebase
       - name: Deploy to Firebase
         run: |
-          firebase deploy --only hosting
+          firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
