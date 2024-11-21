@@ -1,0 +1,43 @@
+name: Deploy to Firebase
+
+# Trigger the action on push to the main branch
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if different
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Use the Node.js version you are using for your app
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          npm install
+
+      # Step 4: Build the Angular app
+      - name: Build the Angular app
+        run: |
+          npm run build --configuration production
+
+      # Step 5: Set up Firebase CLI
+      - name: Set up Firebase CLI
+        uses: firebase-actions/setup-firebase@v2
+        with:
+          firebase-token: ${{ secrets.FIREBASE_TOKEN }}
+
+      # Step 6: Deploy to Firebase
+      - name: Deploy to Firebase
+        run: |
+          firebase deploy --only hosting
