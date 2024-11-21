@@ -3,45 +3,33 @@ name: Deploy to Firebase
 on:
   push:
     branches:
-      - main  # Change this to your default branch if different
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Step 2: Set up Node.js
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'  # Use the Node.js version you are using for your app
+          node-version: '18'
 
-      # Step 3: Install dependencies
       - name: Install dependencies
-        run: |
-          npm install
+        run: npm install
 
-      # Step 4: Install Angular CLI
       - name: Install Angular CLI
-        run: |
-          npm install -g @angular/cli
+        run: npm install -g @angular/cli
 
-      # Step 5: Build the Angular app
       - name: Build the Angular app
-        run: |
-          ng build --configuration production
+        run: ng build --configuration production
 
-      # Step 6: Set up Firebase CLI with Service Account
-      - name: Set up Firebase CLI
-        run: |
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > $HOME/firebase-service-account.json
-          firebase use --add # Authenticate with the Firebase CLI using the service account credentials
-
-      # Step 7: Deploy to Firebase
       - name: Deploy to Firebase
-        run: |
-          firebase deploy --only hosting --token ${{ secrets.FIREBASE_TOKEN }}
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only hosting
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
