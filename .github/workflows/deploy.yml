@@ -25,7 +25,7 @@ jobs:
         run: |
           npm install
 
-      # Step 4: Install Angular CLI globally
+      # Step 4: Install Angular CLI
       - name: Install Angular CLI
         run: |
           npm install -g @angular/cli
@@ -35,11 +35,11 @@ jobs:
         run: |
           ng build --configuration production
 
-      # Step 6: Set up Firebase CLI
+      # Step 6: Set up Firebase CLI with Service Account
       - name: Set up Firebase CLI
         run: |
-          curl -sL https://firebase.tools | bash
-          firebase --version
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}" > $HOME/firebase-service-account.json
+          firebase use --add # Authenticate with the Firebase CLI using the service account credentials
 
       # Step 7: Deploy to Firebase
       - name: Deploy to Firebase
