@@ -38,3 +38,18 @@ $beekidee-theme: mat.define-theme((
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.fullscreen-dialog .mat-mdc-dialog-container {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.fullscreen-dialog {
+  background: transparent;
+}
+
+.fullscreen-dialog .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}

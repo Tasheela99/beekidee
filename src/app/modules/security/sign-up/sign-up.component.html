@@ -1,1 +1,84 @@
-<p>sign-up works!</p>
+<div class="container page">
+  <div class="row">
+    <div class="col-12 col-lg-8 m-0 p-0">
+      <div class="background-image" style="
+        background-image: url('https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/register-image.jpg?alt=media&token=e674aaf2-56d9-4cf1-961a-ff8b77767f54');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        border-radius: 100px 0 0 100px;
+        box-shadow: 0 0 10px darkblue;
+        height: 100%;
+        min-height: 600px;
+      "></div>
+    </div>
+    <div class="col-12 col-lg-4 m-0 p-0">
+      <mat-card class="w-100 register-card">
+        <div class="d-flex align-items-center justify-content-center">
+          <img src="https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/beekidee-logo.png?alt=media&token=c753b18f-73ab-478b-ad89-de9b83fb4eea" width="300" alt="Beekidee Logo">
+        </div>
+        <mat-card-header class="mb-5 mt-3">
+          <mat-card-title class="header-text">Register...</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="row">
+            <div class="col-12 col-lg-6">
+              <mat-form-field class="example-full-width">
+                <mat-label class="reg">Name</mat-label>
+                <input matInput>
+                <mat-icon matSuffix>man</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6">
+              <mat-form-field class="example-full-width">
+                <mat-label>DOB</mat-label>
+                <input matInput [matDatepicker]="picker">
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6">
+              <mat-form-field class="example-full-width">
+                <mat-label>Age</mat-label>
+                <input matInput>
+                <mat-icon matSuffix>elderly</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-lg-6">
+              <mat-form-field class="example-full-width">
+                <mat-label>Gender</mat-label>
+                <mat-select>
+                  <mat-option value="male">Male</mat-option>
+                  <mat-option value="female">Female</mat-option>
+                </mat-select>
+                <mat-icon matSuffix>wc</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-form-field class="example-full-width">
+                <mat-label>Email</mat-label>
+                <input matInput>
+                <mat-icon matSuffix>email</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-form-field class="example-full-width">
+                <mat-label>Password</mat-label>
+                <input matInput type="password">
+                <mat-icon matSuffix>password</mat-icon>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <button mat-raised-button class="example-full-width register-btn" color="primary">Register Now</button>
+            </div>
+            <div class="col-12 my-1">
+            </div>
+            <div class="col-12">
+              <button mat-raised-button class="example-full-width login-btn" color="warn" routerLink="/security/sign-in">Login</button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

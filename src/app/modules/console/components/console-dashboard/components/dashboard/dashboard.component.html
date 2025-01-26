@@ -1,0 +1,153 @@
+<div class="outer">
+  <div class="inner container-fluid">
+    <div class="row mb-4">
+      <div class="col-12 col-lg-3">
+        <mat-card class="example-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-title>Shiba Inu</mat-card-title>
+              <mat-card-subtitle>Small</mat-card-subtitle>
+              <i class="fa-solid fa-child fs-1"></i>
+            </mat-card-title-group>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-12 col-lg-3">
+        <mat-card class="example-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-title>Shiba Inu</mat-card-title>
+              <mat-card-subtitle>Small</mat-card-subtitle>
+              <i class="fa-solid fa-child fs-1"></i>
+            </mat-card-title-group>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-12 col-lg-3">
+        <mat-card class="example-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-title>Shiba Inu</mat-card-title>
+              <mat-card-subtitle>Small</mat-card-subtitle>
+              <i class="fa-solid fa-child fs-1"></i>
+            </mat-card-title-group>
+          </mat-card-header>
+        </mat-card>
+      </div>
+      <div class="col-12 col-lg-3">
+        <mat-card class="example-card" appearance="outlined">
+          <mat-card-header>
+            <mat-card-title-group>
+              <mat-card-title>Shiba Inu</mat-card-title>
+              <mat-card-subtitle>Small</mat-card-subtitle>
+              <i class="fa-solid fa-child fs-1"></i>
+            </mat-card-title-group>
+          </mat-card-header>
+        </mat-card>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12 col-lg-3 boys">
+        <mat-card appearance="outlined" class="">
+          <mat-card-content>
+            <div id="chart-boys">
+              <apx-chart
+                [series]="chartOptions.series"
+                [chart]="chartOptions.chart"
+                [plotOptions]="chartOptions.plotOptions"
+                [labels]="chartOptions.labels"
+                [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill"
+              ></apx-chart>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <div id="card">
+        </div>
+
+      </div>
+      <div class="col-12 col-lg-3  girls">
+        <mat-card appearance="outlined" class="">
+          <mat-card-content>
+            <div id="chart-girls">
+              <apx-chart
+                [series]="chartOptions.series"
+                [chart]="chartOptions.chart"
+                [plotOptions]="chartOptions.plotOptions"
+                [labels]="chartOptions.labels"
+                [stroke]="chartOptions.stroke"
+                [fill]="chartOptions.fill"
+              ></apx-chart>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-12 col-lg-6 users">
+        <mat-card appearance="outlined">
+          <mat-card-content>
+            <div class="mat-elevation-z8">
+              <table mat-table [dataSource]="dataSource">
+
+                <!-- Position Column -->
+                <ng-container matColumnDef="position">
+                  <th mat-header-cell *matHeaderCellDef> No. </th>
+                  <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+                </ng-container>
+
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef> Name </th>
+                  <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+                </ng-container>
+
+                <!-- Weight Column -->
+                <ng-container matColumnDef="weight">
+                  <th mat-header-cell *matHeaderCellDef> Weight </th>
+                  <td mat-cell *matCellDef="let element"> {{element.weight | currency:'LKR'}} </td>
+                </ng-container>
+
+                <!-- Symbol Column -->
+                <ng-container matColumnDef="symbol">
+                  <th mat-header-cell *matHeaderCellDef> Symbol </th>
+                  <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+
+              <mat-paginator [pageSizeOptions]="[3, 5, 10, 20]"
+                             showFirstLastButtons
+                             aria-label="Select page of periodic elements">
+              </mat-paginator>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <div class="row mb-4">
+      <div class="col-12">
+        <mat-card appearance="outlined" class="py-2">
+          <mat-card-content>
+            <div id="chart-bar">
+              <apx-chart
+                [series]="barChartOptions.series"
+                [chart]="barChartOptions.chart"
+                [dataLabels]="barChartOptions.dataLabels"
+                [markers]="barChartOptions.markers"
+                [xaxis]="barChartOptions.xaxis"
+                [yaxis]="barChartOptions.yaxis"
+                [stroke]="barChartOptions.stroke"
+                [title]="barChartOptions.title"
+                [colors]="barChartOptions.colors"
+                [fill]="barChartOptions.fill"
+                [forecastDataPoints]="barChartOptions.forecastDataPoints"
+                [legend]="barChartOptions.legend"
+              ></apx-chart>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+</div>

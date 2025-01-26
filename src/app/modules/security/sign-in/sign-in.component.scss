@@ -1,13 +1,25 @@
-.outer{
-  width: 100%;
-  height: 100vh;
-
-  .inner{
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
+.login-card{
+  height: 80vh;
+  display: block;
+  place-content: center;
+  border-radius: 100px 0 0 100px;
+  box-shadow: 0 0 10px #4b6584;
 }
+
+
+.signupwithgoogle-btn{
+  background-color:#2d98da!important;
+  color: #d1d8e0!important;
+}
+
+.login-btn{
+  background-color: #4b7bec!important;
+  color: #d1d8e0!important;
+}
+
+.register-btn{
+  background-color: #3867d6!important;
+  color: #d1d8e0!important;
+}
+
+
