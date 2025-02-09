@@ -1,4 +1,6 @@
-import {Component, inject, OnInit} from '@angular/core';
+// plain-tasks.component.ts
+
+import {Component, inject} from '@angular/core';
 import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {MatButton} from "@angular/material/button";
@@ -7,6 +9,10 @@ import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
 import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
 import {AnimationDialogComponent} from "../../../../../../components/animation-dialog/animation-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {DraggableCameraComponent} from "../../../../../../components/draggable-camera/draggable-camera.component";
+import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardModule} from "@angular/material/card";
+import {MatIconModule} from "@angular/material/icon";
+
 
 @Component({
   selector: 'app-plain-tasks',
@@ -26,7 +32,14 @@ import {MatDialog} from "@angular/material/dialog";
     MatExpansionPanelTitle,
     MatExpansionPanelHeader,
     NgClass,
-    CdkDropListGroup
+    CdkDropListGroup,
+    DraggableCameraComponent,
+    MatCard,
+    MatCardHeader,
+    MatCardContent,
+    MatCardActions,
+    MatIconModule,
+    MatCardModule
   ],
   providers: [{
     provide: YOUTUBE_PLAYER_CONFIG,
@@ -37,20 +50,22 @@ import {MatDialog} from "@angular/material/dialog";
   templateUrl: './plain-tasks.component.html',
   styleUrl: './plain-tasks.component.scss'
 })
-export class PlainTasksComponent{
+export class PlainTasksComponent {
   videoId: string = '';
   items = [''];
-
   basket = [''];
-
   searchItem = '';
   itemFound = false;
-
   counter = 0;
   isStarted = false;
   isAnswerCorrect = false;
+  showCamera = true;
 
   dialog = inject(MatDialog);
+
+  toggleCameraVisibility() {
+    this.showCamera = !this.showCamera;
+  }
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -70,28 +85,14 @@ export class PlainTasksComponent{
     for (let i = 0; i < this.basket.length; i++) {
       if (this.basket[i] === this.searchItem) {
         this.itemFound = true;
-        this.setAlerts( this.itemFound)
+        this.setAlerts(this.itemFound)
         break;
       }
       else{
-        this.setAlerts( this.itemFound)
+        this.setAlerts(this.itemFound)
       }
     }
   }
-
-  // setAlerts(answer:boolean){
-  //   if (answer) {
-  //     console.log(`${this.searchItem} is available in the items array.`);
-  //     this.isAnswerCorrect = true;
-  //
-  //     setTimeout(() => {
-  //       this.moveToNext()
-  //     }, 1000);
-  //
-  //   } else {
-  //     console.log(`${this.searchItem} is not available in the items array.`);
-  //   }
-  // }
 
   setAlerts(answer: boolean) {
     if (answer) {
@@ -124,10 +125,6 @@ export class PlainTasksComponent{
       console.log('Animation dialog closed');
     });
   }
-
-  //
-
-
 
   dataList:any = [
     {
@@ -165,6 +162,7 @@ export class PlainTasksComponent{
     this.searchItem = '';
     this.basket = [];
   }
+
   reStartGame(){
     this.reset();
     this.counter = 0;
@@ -188,9 +186,8 @@ export class PlainTasksComponent{
 
   extractVideoId(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    const url = inputElement?.value || ''; // Ensure value is defined
+    const url = inputElement?.value || '';
     const videoIdMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/);
     this.videoId = videoIdMatch ? videoIdMatch[1] : '';
   }
-  protected readonly HTMLInputElement = HTMLInputElement;
 }

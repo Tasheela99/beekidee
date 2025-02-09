@@ -14,7 +14,6 @@ import {
 } from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 
-// Define interface for user data
 interface UserData {
   uid: string;
   email: string | null;
@@ -22,7 +21,7 @@ interface UserData {
   photoURL: string | null;
   lastLogin: string;
   updatedAt: string;
-  createdAt?: string; // Optional field for new users
+  createdAt?: string;
 }
 
 @Injectable({
