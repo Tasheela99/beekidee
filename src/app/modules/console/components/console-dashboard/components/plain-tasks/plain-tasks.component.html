@@ -1,10 +1,24 @@
 <div class="container">
+  <!-- Camera toggle button -->
+  <div class="row mb-3">
+    <div class="col-12">
+      <button mat-raised-button color="primary" (click)="toggleCameraVisibility()">
+        <mat-icon>{{ showCamera ? 'videocam_off' : 'videocam' }}</mat-icon>
+        {{ showCamera ? 'Hide Camera' : 'Show Camera' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Camera component -->
+  <app-draggable-camera *ngIf="showCamera"></app-draggable-camera>
+
   <div class="row">
     <div class="col-12">
       <mat-accordion>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
+              <mat-icon>play_circle</mat-icon>
               Video Material
             </mat-panel-title>
           </mat-expansion-panel-header>
@@ -20,6 +34,7 @@
                   (input)="extractVideoId($event)"
                   value="https://www.youtube.com/watch?v=yngKXEBALE0&ab_channel=ClipZone%3AHeroes%26Villains"
                 />
+                <mat-icon matSuffix>link</mat-icon>
               </mat-form-field>
             </div>
           </div>
@@ -33,53 +48,80 @@
       </mat-accordion>
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
-        <h1 *ngIf="searchItem!=''"> Find {{ searchItem }} </h1>
-        <div *ngIf="isStarted && counter<dataList.length" cdkDropListGroup class="container-wrapper">
-          <!-- Your Answer section moved to top -->
-          <div class="example-container">
-            <h2>Your Answer</h2>
-            <div
-              cdkDropList
-              [cdkDropListData]="basket"
-              class="example-list"
-              (cdkDropListDropped)="drop($event)">
-              @for (item of basket; track item) {
-                <div class="example-box" cdkDrag>{{ item }}</div>
-              }
-            </div>
-          </div>
 
-          <!-- Answer List section moved to bottom -->
-          <div class="example-container2">
-            <h2>Answer List</h2>
-            <div
-              cdkDropList
-              [cdkDropListData]="items"
-              class="example-list2"
-              cdkDropListSortingDisabled
-              (cdkDropListDropped)="drop($event)">
-              @for (item of items; track item) {
-                <div class="example-box2" cdkDrag>{{ item }}</div>
-              }
+  <div class="row mt-4">
+    <div class="col-12">
+      <mat-card class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
+        <mat-card-header *ngIf="searchItem!=''" class="justify-content-center">
+          <mat-card-title>
+            <h1 class="mat-headline-4">Find {{ searchItem }}</h1>
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div *ngIf="isStarted && counter<dataList.length" cdkDropListGroup class="container-wrapper">
+            <div class="example-container">
+              <h2 class="mat-h2">Your Answer</h2>
+              <mat-card class="answer-card">
+                <div
+                  cdkDropList
+                  [cdkDropListData]="basket"
+                  class="example-list"
+                  (cdkDropListDropped)="drop($event)">
+                  @for (item of basket; track item) {
+                    <mat-card class="example-box mat-elevation-z2" cdkDrag>
+                      {{ item }}
+                    </mat-card>
+                  }
+                </div>
+              </mat-card>
+            </div>
+
+            <div class="example-container2">
+              <h2 class="mat-h2">Answer List</h2>
+              <mat-card class="answer-card">
+                <div
+                  cdkDropList
+                  [cdkDropListData]="items"
+                  class="example-list2"
+                  cdkDropListSortingDisabled
+                  (cdkDropListDropped)="drop($event)">
+                  @for (item of items; track item) {
+                    <mat-card class="example-box2 mat-elevation-z2" cdkDrag>
+                      {{ item }}
+                    </mat-card>
+                  }
+                </div>
+              </mat-card>
             </div>
           </div>
-        </div>
-        <div class="buttons">
+        </mat-card-content>
+
+        <mat-card-actions class="buttons justify-content-center">
           <div class="start-btn" *ngIf="!isStarted">
-            <button (click)="start()"> Start</button>
+            <button mat-raised-button color="primary" (click)="start()">
+              <mat-icon>play_arrow</mat-icon>
+              Start
+            </button>
           </div>
-          <div class="reset" *ngIf="isStarted">
-            <button (click)="reStartGame()"> Re Start</button>
+        </mat-card-actions>
+        <mat-card-footer>
+          <div class="d-flex align-items-center justify-content-end p-4 gap-2">
+            <div class="reset" *ngIf="isStarted">
+              <button mat-raised-button color="warn" (click)="reStartGame()">
+                <mat-icon>refresh</mat-icon>
+                Re Start
+              </button>
+            </div>
+            <div class="next" *ngIf="isStarted && counter<dataList.length">
+              <button mat-raised-button color="accent" (click)="moveToNext()">
+                <mat-icon>arrow_forward</mat-icon>
+                Next Question
+              </button>
+            </div>
           </div>
-          <div class="next" *ngIf="isStarted && counter<dataList.length">
-            <button (click)="moveToNext()"> Next Question</button>
-          </div>
-        </div>
-      </div>
+        </mat-card-footer>
+      </mat-card>
     </div>
   </div>
 </div>
-

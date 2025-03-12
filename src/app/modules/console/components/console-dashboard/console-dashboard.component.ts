@@ -6,6 +6,7 @@ import {AuthService} from "../../../../services/auth.service";
 import {Router, RouterLink, RouterOutlet} from "@angular/router";
 import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
 import {MatList, MatListItem} from "@angular/material/list";
+import {NgOptimizedImage} from "@angular/common";
 
 @Component({
   selector: 'app-console-dashboard',
@@ -20,7 +21,8 @@ import {MatList, MatListItem} from "@angular/material/list";
     MatList,
     MatListItem,
     RouterOutlet,
-    RouterLink
+    RouterLink,
+    NgOptimizedImage
   ],
   templateUrl: './console-dashboard.component.html',
   styleUrl: './console-dashboard.component.scss'
