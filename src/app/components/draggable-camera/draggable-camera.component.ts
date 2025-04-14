@@ -1,8 +1,8 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, AfterViewInit } from '@angular/core';
-import { CdkDrag, CdkDragHandle } from '@angular/cdk/drag-drop';
-import { MatButton, MatIconButton } from '@angular/material/button';
-import { MatIcon } from '@angular/material/icon';
-import { NgIf } from '@angular/common';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import {CdkDrag, CdkDragHandle} from '@angular/cdk/drag-drop';
+import {MatButton, MatIconButton} from '@angular/material/button';
+import {MatIcon} from '@angular/material/icon';
+import {NgIf} from '@angular/common';
 import * as faceapi from 'face-api.js';
 
 @Component({
@@ -27,6 +27,18 @@ export class DraggableCameraComponent implements OnInit, OnDestroy, AfterViewIni
   private stream: MediaStream | null = null;
   modelsLoaded = false;
   faceDetectionInterval: any;
+  startTime: number = 0;
+  expressionsHistory: string[] = [];
+  expressionCounts: any = {
+    happy: 0,
+    sad: 0,
+    angry: 0,
+    surprised: 0,
+    neutral: 0,
+    fearful: 0,
+    disgusted: 0
+  };
+  lastExpressionTime: number = 0;
 
   ngOnInit() {
     this.requestCameraPermission();
@@ -61,7 +73,7 @@ export class DraggableCameraComponent implements OnInit, OnDestroy, AfterViewIni
 
   async requestCameraPermission() {
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      this.stream = await navigator.mediaDevices.getUserMedia({video: true});
       this.videoElement.nativeElement.srcObject = this.stream;
       this.videoElement.nativeElement.play();
       this.isActive = true;
@@ -111,6 +123,7 @@ export class DraggableCameraComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     const video = this.videoElement.nativeElement;
+    this.startTime = Date.now();
 
     this.faceDetectionInterval = setInterval(async () => {
       const detectionsWithExpressions = await faceapi
@@ -134,10 +147,23 @@ export class DraggableCameraComponent implements OnInit, OnDestroy, AfterViewIni
           surprised: expressions.surprised
         };
 
+// Make sure the expression values are numbers
         const dominantExpression = Object.keys(expressionsObject).reduce((a, b) => {
-          // Type assertion here:
-          return expressionsObject[a as keyof typeof expressionsObject] > expressionsObject[b as keyof typeof expressionsObject] ? a : b;
+          return expressionsObject[a as keyof typeof expressionsObject] > expressionsObject[b as keyof typeof expressionsObject]
+            ? a
+            : b;
         });
+
+        // Store the expression in history
+        this.expressionsHistory.push(dominantExpression);
+        this.expressionCounts[dominantExpression] += 1;
+
+        // Check if 10 seconds have passed
+        const currentTime = Date.now();
+        if (currentTime - this.startTime >= 10000) {
+          this.calculateAverageExpression();
+          this.startTime = currentTime; // Reset start time for the next 10-second window
+        }
 
         console.log('Dominant Expression:', dominantExpression);
         console.log('Expression Probabilities:', expressions);
@@ -156,5 +182,22 @@ export class DraggableCameraComponent implements OnInit, OnDestroy, AfterViewIni
         video.style.boxShadow = 'none';
       }
     }, 100);
+  }
+
+  calculateAverageExpression() {
+    const totalExpressions: number = (Object.values(this.expressionCounts) as number[]).reduce((sum: number, count: number) => sum + count, 0);
+
+    let maxProbability = 0;
+    let averageExpression = 'neutral';
+
+    for (const expression in this.expressionCounts) {
+      const probability = this.expressionCounts[expression as keyof typeof this.expressionCounts] / totalExpressions;
+      if (probability > maxProbability) {
+        maxProbability = probability;
+        averageExpression = expression;
+      }
+    }
+
+    console.log('Average Expression in Last 10 seconds:', averageExpression);
   }
 }
