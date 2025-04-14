@@ -1,0 +1,217 @@
+.example-container {
+  //width: auto;
+  //max-width: 100%;
+  margin: 0 25px 25px 0;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.example-list {
+  min-height: 60px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+
+}
+
+.example-box {
+  height: 100px;
+  //width: 100px!important;
+  padding: 20px 10px;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 14px;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.ctn{
+  border: 2px solid green;
+}
+
+
+.container-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.example-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.example-list {
+  border: solid 1px #ccc;
+  min-height: 60px;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+}
+
+.example-box {
+  padding: 20px 10px;
+  border-bottom: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+}
+
+
+.example-container2 {
+  width: 100%;
+  margin: 0;;
+}
+
+.example-list2 {
+  min-height: 60px;
+  border-radius: 4px;
+  overflow-x: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.example-box2 {
+  padding: 20px;
+  margin: 0 5px;
+  border: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  cursor: move;
+  background: white;
+  font-size: 14px;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+
+
+.fullscreen-dialog .mat-mdc-dialog-container {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.fullscreen-dialog {
+  background: transparent;
+}
+
+.fullscreen-dialog .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+
+
+.robot-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Or a specific height */
+}
+
+.robot-head {
+  width: 200px;
+  height: 200px;
+  background-color: #eee;
+  border-radius: 50%;
+  position: relative;
+  border: 3px solid #333;
+}
+
+.robot-face {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+}
+
+.robot-eyes {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+
+.robot-eye {
+  width: 30px;
+  height: 30px;
+  background-color: #333;
+  border-radius: 50%;
+}
+
+.robot-mouth {
+  width: 80px;
+  height: 10px;
+  background-color: #333;
+  border-radius: 5px;
+  margin: 40px auto;
+}
+
+/* Example face expressions */
+.robot-container.happy .robot-mouth {
+  height: 20px;
+  border-radius: 10px;
+}
+
+.robot-container.sad .robot-mouth {
+  height: 5px;
+  border-radius: 2px;
+  transform: translateY(10px);
+}
+
+.robot-container.angry .robot-eyes .robot-eye {
+  height: 20px;
+  transform: translateY(5px);
+}
+
+.robot-container.surprised .robot-mouth {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.robot-container.surprised .robot-eyes .robot-eye {
+  height: 40px;
+  width: 40px;
+}
