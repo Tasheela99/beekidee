@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {
-  Auth, getAuth,
+  Auth, createUserWithEmailAndPassword, getAuth,
   GoogleAuthProvider, signInWithEmailAndPassword,
   signInWithPopup,
   UserCredential
@@ -119,6 +119,31 @@ export class AuthService {
     } catch (error) {
       console.error('Error fetching user data:', error);
       throw error;
+    }
+  }
+
+  async signUp(email: any, password: any, displayName: any): Promise<void> {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+      const user = userCredential.user;
+
+      if (user) {
+        const userData: UserData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: displayName,
+          photoURL: user.photoURL,
+          lastLogin: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+        };
+
+        const userRef = doc(this.firestore, `users/${user.uid}`);
+        await setDoc(userRef, userData);
+      }
+    } catch (error) {
+      console.error('Error during sign-up:', error);
+      throw new Error('Failed to sign up. Please try again.');
     }
   }
 

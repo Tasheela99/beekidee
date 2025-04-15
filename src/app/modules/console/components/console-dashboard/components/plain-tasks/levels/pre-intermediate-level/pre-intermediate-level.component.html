@@ -1,6 +1,6 @@
-<div class="container">
+<div class="container-fluid m-0 p-0">
   <div class="row">
-    <div class="col-12">
+    <div class="col-12 m-0 p-0">
       <mat-card class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
         <mat-card-header *ngIf="searchItem!=''" class="justify-content-center">
           <mat-card-title>
@@ -51,7 +51,7 @@
           <div class="start-btn" *ngIf="!isStarted">
             <button mat-raised-button color="primary" (click)="start()">
               <mat-icon>play_arrow</mat-icon>
-              Start
+              Start Pre Intermediate Level Activities
             </button>
           </div>
         </mat-card-actions>
