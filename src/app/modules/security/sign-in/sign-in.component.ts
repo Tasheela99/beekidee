@@ -18,20 +18,14 @@ import {Auth} from "@angular/fire/auth";
   standalone: true,
   imports: [
     MatButton,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
     MatFormField,
     MatInput,
     MatLabel,
-    MatOption,
-    MatSelect,
     MatSuffix,
     MatCard,
     MatCardHeader,
     MatCardTitle,
     MatCardContent,
-    MatCardFooter,
     MatIcon,
     RouterLink,
     ReactiveFormsModule,
@@ -84,7 +78,7 @@ export class SignInComponent {
       const {email, password} = this.loginForm.value;
       this.auth.signIn(email, password).then(
         (userCredential) => {
-          console.log('Login successful!', userCredential.user);
+          console.log('Login successful!', userCredential);
           setTimeout(() => {
             this.router.navigateByUrl('/console');
           }, 1000);
