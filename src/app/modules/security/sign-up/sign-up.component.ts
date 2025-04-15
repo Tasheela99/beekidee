@@ -45,15 +45,17 @@ export class SignUpComponent {
   form = new FormGroup({
     displayName: new FormControl(''),
     email: new FormControl(''),
+    phoneNumber: new FormControl(''),
     password: new FormControl(''),
   })
 
   onSubmit() {
     const displayName = this.form.get('displayName')?.value;
     const email = this.form.get('email')?.value;
+    const phoneNumber = this.form.get('phoneNumber')?.value;
     const password = this.form.get('password')?.value;
 
-    this.authService.signUp(email, password, displayName)
+    this.authService.signUp(email, password, displayName, phoneNumber)
       .then(() => {
         this.router.navigateByUrl('/security/kids-details');
       })
