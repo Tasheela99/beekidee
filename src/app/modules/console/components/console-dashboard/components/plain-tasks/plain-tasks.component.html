@@ -1,127 +1,73 @@
-<div class="container">
-  <!-- Camera toggle button -->
-  <div class="row mb-3">
-    <div class="col-12">
-      <button mat-raised-button color="primary" (click)="toggleCameraVisibility()">
-        <mat-icon>{{ showCamera ? 'videocam_off' : 'videocam' }}</mat-icon>
-        {{ showCamera ? 'Hide Camera' : 'Show Camera' }}
-      </button>
-    </div>
-  </div>
-
-  <!-- Camera component -->
-  <app-draggable-camera *ngIf="showCamera"></app-draggable-camera>
-
+<div class="container-fluid w-100">
   <div class="row">
-    <div class="col-12">
-      <mat-accordion>
-        <mat-expansion-panel>
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-icon>play_circle</mat-icon>
-              Video Material
-            </mat-panel-title>
-          </mat-expansion-panel-header>
+    <div class="col-12 col-lg-12 left">
+      <div class="row mb-3">
+        <div class="col-12">
+          <button mat-raised-button color="primary" (click)="toggleCameraVisibility()">
+            <mat-icon>{{ showCamera ? 'videocam_off' : 'videocam' }}</mat-icon>
+            {{ showCamera ? 'Hide Camera' : 'Show Camera' }}
+          </button>
+        </div>
+      </div>
 
-          <div class="row">
-            <div class="col-12">
-              <mat-form-field appearance="fill" style="width: 100%">
-                <mat-label>Enter YouTube URL</mat-label>
-                <input
-                  matInput
-                  type="text"
-                  placeholder="Enter YouTube URL"
-                  (input)="extractVideoId($event)"
-                  value="https://www.youtube.com/watch?v=yngKXEBALE0&ab_channel=ClipZone%3AHeroes%26Villains"
-                />
-                <mat-icon matSuffix>link</mat-icon>
-              </mat-form-field>
-            </div>
-          </div>
+      <!-- Camera component -->
+<!--      <app-draggable-camera *ngIf="showCamera"></app-draggable-camera>-->
 
-          <div class="row">
-            <div class="col-12 d-flex align-items-center justify-content-center">
-              <youtube-player *ngIf="videoId?.length" [videoId]="videoId" loadApi="true"></youtube-player>
-            </div>
-          </div>
-        </mat-expansion-panel>
-      </mat-accordion>
-    </div>
-  </div>
+      <div class="row">
+        <div class="col-12">
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <mat-icon>play_circle</mat-icon>
+                  Video Material
+                </mat-panel-title>
+              </mat-expansion-panel-header>
 
-  <div class="row mt-4">
-    <div class="col-12">
-      <mat-card class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
-        <mat-card-header *ngIf="searchItem!=''" class="justify-content-center">
-          <mat-card-title>
-            <h1 class="mat-headline-4">Find {{ searchItem }}</h1>
-          </mat-card-title>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div *ngIf="isStarted && counter<dataList.length" cdkDropListGroup class="container-wrapper">
-            <div class="example-container">
-              <h2 class="mat-h2">Your Answer</h2>
-              <mat-card class="answer-card">
-                <div
-                  cdkDropList
-                  [cdkDropListData]="basket"
-                  class="example-list"
-                  (cdkDropListDropped)="drop($event)">
-                  @for (item of basket; track item) {
-                    <mat-card class="example-box mat-elevation-z2" cdkDrag>
-                      {{ item }}
-                    </mat-card>
-                  }
+              <div class="row">
+                <div class="col-12">
+                  <mat-form-field appearance="fill" style="width: 100%">
+                    <mat-label>Enter YouTube URL</mat-label>
+                    <input
+                      matInput
+                      type="text"
+                      placeholder="Enter YouTube URL"
+                      (input)="extractVideoId($event)"
+                      value="https://www.youtube.com/watch?v=yngKXEBALE0&ab_channel=ClipZone%3AHeroes%26Villains"
+                    />
+                    <mat-icon matSuffix>link</mat-icon>
+                  </mat-form-field>
                 </div>
-              </mat-card>
-            </div>
+              </div>
 
-            <div class="example-container2">
-              <h2 class="mat-h2">Answer List</h2>
-              <mat-card class="answer-card">
-                <div
-                  cdkDropList
-                  [cdkDropListData]="items"
-                  class="example-list2"
-                  cdkDropListSortingDisabled
-                  (cdkDropListDropped)="drop($event)">
-                  @for (item of items; track item) {
-                    <mat-card class="example-box2 mat-elevation-z2" cdkDrag>
-                      {{ item }}
-                    </mat-card>
-                  }
+              <div class="row">
+                <div class="col-12 d-flex align-items-center justify-content-center">
+                  <youtube-player *ngIf="videoId?.length" [videoId]="videoId" loadApi="true"></youtube-player>
                 </div>
-              </mat-card>
-            </div>
-          </div>
-        </mat-card-content>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+      </div>
 
-        <mat-card-actions class="buttons justify-content-center">
-          <div class="start-btn" *ngIf="!isStarted">
-            <button mat-raised-button color="primary" (click)="start()">
-              <mat-icon>play_arrow</mat-icon>
-              Start
-            </button>
-          </div>
-        </mat-card-actions>
-        <mat-card-footer>
-          <div class="d-flex align-items-center justify-content-end p-4 gap-2">
-            <div class="reset" *ngIf="isStarted">
-              <button mat-raised-button color="warn" (click)="reStartGame()">
-                <mat-icon>refresh</mat-icon>
-                Re Start
-              </button>
-            </div>
-            <div class="next" *ngIf="isStarted && counter<dataList.length">
-              <button mat-raised-button color="accent" (click)="moveToNext()">
-                <mat-icon>arrow_forward</mat-icon>
-                Next Question
-              </button>
-            </div>
-          </div>
-        </mat-card-footer>
-      </mat-card>
+      <div class="row mt-4">
+        <div class="col-12">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
     </div>
+<!--    <div class="col-12 col-lg-4 right">-->
+<!--      <div class="robot-container">-->
+<!--        <div class="robot-head">-->
+<!--          <div class="robot-face">-->
+<!--            <div class="robot-eyes">-->
+<!--              <div class="robot-eye left-eye"></div>-->
+<!--              <div class="robot-eye right-eye"></div>-->
+<!--            </div>-->
+<!--            <div class="robot-mouth"></div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
   </div>
 </div>

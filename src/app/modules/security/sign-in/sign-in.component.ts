@@ -12,26 +12,22 @@ import {MatIcon} from "@angular/material/icon";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgIf} from "@angular/common";
 import {Auth} from "@angular/fire/auth";
+import {KidsService} from "../../../services/kids.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
   imports: [
     MatButton,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
     MatFormField,
     MatInput,
     MatLabel,
-    MatOption,
-    MatSelect,
     MatSuffix,
     MatCard,
     MatCardHeader,
     MatCardTitle,
     MatCardContent,
-    MatCardFooter,
     MatIcon,
     RouterLink,
     ReactiveFormsModule,
@@ -46,7 +42,9 @@ export class SignInComponent {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
+  private kidsService = inject(KidsService);
+  private snackBar = inject(MatSnackBar);
   private router = inject(Router);
   loginForm: FormGroup;
   private firebaseAuth = inject(Auth);
@@ -57,7 +55,7 @@ export class SignInComponent {
     this.successMessage = '';
 
     try {
-      const result = await this.auth.signInWithGoogle();
+      const result = await this.authService.signInWithGoogle();
       this.successMessage = 'Successfully signed in!';
 
       setTimeout(() => {
@@ -82,20 +80,51 @@ export class SignInComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const {email, password} = this.loginForm.value;
-      this.auth.signIn(email, password).then(
+      this.authService.signIn(email, password).then(
         (userCredential) => {
-          console.log('Login successful!', userCredential.user);
-          setTimeout(() => {
-            this.router.navigateByUrl('/console');
-          }, 1000);
+          console.log('Login successful!', userCredential);
+
+          this.snackBar.open('Login successful!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+
+          this.kidsService.getKidsByParentEmail(email).subscribe((kids) => {
+            if (kids && kids.length > 0) {
+              setTimeout(() => {
+                this.router.navigateByUrl('/console');
+              }, 1000);
+            } else {
+              this.snackBar.open('No kids data found. Please add your child\'s details.', 'Add Now', {
+                duration: 3000,
+                horizontalPosition: 'center',
+                verticalPosition: 'top'
+              });
+
+              setTimeout(() => {
+                this.router.navigateByUrl('/security/kids-details');
+              }, 1000);
+            }
+          });
         },
         (error) => {
-          console.error('Login failed', error);
-          this.errorMessage = error.message; // Display error message
+          this.snackBar.open(`Login failed:`, 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
         }
       );
     } else {
+      this.snackBar.open('Please fill out the form correctly before submitting.', 'Got it', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
       console.log('Form is invalid');
     }
   }
+
+
 }

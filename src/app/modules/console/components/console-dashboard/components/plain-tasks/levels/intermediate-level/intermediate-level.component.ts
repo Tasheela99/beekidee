@@ -1,58 +1,49 @@
-// plain-tasks.component.ts
-
-import {Component, inject} from '@angular/core';
-import {CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {NgClass, NgForOf, NgIf} from "@angular/common";
+import {Component, inject, OnInit} from '@angular/core';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray,
+  transferArrayItem
+} from "@angular/cdk/drag-drop";
 import {MatButton} from "@angular/material/button";
-import {YOUTUBE_PLAYER_CONFIG, YouTubePlayer} from "@angular/youtube-player";
-import {MatFormField, MatInput, MatLabel} from "@angular/material/input";
-import {MatAccordion, MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from "@angular/material/expansion";
-import {AnimationDialogComponent} from "../../../../../../components/animation-dialog/animation-dialog.component";
+import {
+  MatCard,
+  MatCardActions,
+  MatCardContent,
+  MatCardFooter,
+  MatCardHeader, MatCardModule,
+  MatCardTitle
+} from "@angular/material/card";
+import {MatIcon} from "@angular/material/icon";
+import {NgClass, NgIf} from "@angular/common";
 import {MatDialog} from "@angular/material/dialog";
-import {DraggableCameraComponent} from "../../../../../../components/draggable-camera/draggable-camera.component";
-import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardModule} from "@angular/material/card";
-import {MatIconModule} from "@angular/material/icon";
-import {RouterOutlet} from "@angular/router";
-
+import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 
 @Component({
-  selector: 'app-plain-tasks',
+  selector: 'app-intermediate-level',
   standalone: true,
   imports: [
-    CdkDropList,
     CdkDrag,
-    NgForOf,
-    NgIf,
-    MatButton,
-    YouTubePlayer,
-    MatInput,
-    MatFormField,
-    MatLabel,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelTitle,
-    MatExpansionPanelHeader,
-    NgClass,
+    CdkDropList,
     CdkDropListGroup,
-    DraggableCameraComponent,
+    MatButton,
     MatCard,
-    MatCardHeader,
-    MatCardContent,
     MatCardActions,
-    MatIconModule,
+    MatCardContent,
+    MatCardFooter,
+    MatCardHeader,
+    MatCardTitle,
+    MatIcon,
+    NgIf,
     MatCardModule,
-    RouterOutlet
+    NgClass
   ],
-  providers: [{
-    provide: YOUTUBE_PLAYER_CONFIG,
-    useValue: {
-      loadApi: true
-    }
-  }],
-  templateUrl: './plain-tasks.component.html',
-  styleUrl: './plain-tasks.component.scss'
+  templateUrl: './intermediate-level.component.html',
+  styleUrl: './intermediate-level.component.scss'
 })
-export class PlainTasksComponent {
+export class IntermediateLevelComponent{
   videoId: string = '';
   items = [''];
   basket = [''];
@@ -83,14 +74,13 @@ export class PlainTasksComponent {
     this.checkAnswer()
   }
 
-  checkAnswer(){
+  checkAnswer() {
     for (let i = 0; i < this.basket.length; i++) {
       if (this.basket[i] === this.searchItem) {
         this.itemFound = true;
         this.setAlerts(this.itemFound)
         break;
-      }
-      else{
+      } else {
         this.setAlerts(this.itemFound)
       }
     }
@@ -120,7 +110,7 @@ export class PlainTasksComponent {
       height: '100vh',
       width: '100vw',
       panelClass: 'fullscreen-dialog',
-      data: { isCorrect, animationUrl }
+      data: {isCorrect, animationUrl}
     });
 
     dialogRef.afterClosed().subscribe(() => {
@@ -128,36 +118,36 @@ export class PlainTasksComponent {
     });
   }
 
-  dataList:any = [
+  dataList: any = [
     {
-      itemlist:['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados','Bananas'],
+      itemlist: ['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados', 'Bananas'],
       searchItem: 'Onions'
     },
     {
-      itemlist:['Red', 'Green', 'Blue', 'Yellow', 'White','Black'],
+      itemlist: ['Red', 'Green', 'Blue', 'Yellow', 'White', 'Black'],
       searchItem: 'Blue'
     },
     {
-      itemlist:['1', '10', '20', '30', '50','60'],
+      itemlist: ['1', '10', '20', '30', '50', '60'],
       searchItem: '50'
     },
   ]
 
-  start(){
+  start() {
     this.items = this.dataList[0].itemlist;
-    this.searchItem= this.dataList[0].searchItem;
+    this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
   }
 
-  moveToNext(){
-    this.counter +=1;
+  moveToNext() {
+    this.counter += 1;
     this.reset();
 
     this.items = this.dataList[this.counter].itemlist;
-    this.searchItem= this.dataList[this.counter].searchItem;
+    this.searchItem = this.dataList[this.counter].searchItem;
   }
 
-  reset(){
+  reset() {
     this.isAnswerCorrect = false;
     this.itemFound = false;
     this.items = [];
@@ -165,22 +155,22 @@ export class PlainTasksComponent {
     this.basket = [];
   }
 
-  reStartGame(){
+  reStartGame() {
     this.reset();
     this.counter = 0;
-    this.isStarted= false;
+    this.isStarted = false;
 
     this.dataList = [
       {
-        itemlist:['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados','Bananas'],
+        itemlist: ['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados', 'Bananas'],
         searchItem: 'Onions'
       },
       {
-        itemlist:['Red', 'Green', 'Blue', 'Yellow', 'White','Black'],
+        itemlist: ['Red', 'Green', 'Blue', 'Yellow', 'White', 'Black'],
         searchItem: 'Blue'
       },
       {
-        itemlist:['1', '10', '20', '30', '50','60'],
+        itemlist: ['1', '10', '20', '30', '50', '60'],
         searchItem: '50'
       },
     ]
@@ -192,5 +182,4 @@ export class PlainTasksComponent {
     const videoIdMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/);
     this.videoId = videoIdMatch ? videoIdMatch[1] : '';
   }
-
 }
