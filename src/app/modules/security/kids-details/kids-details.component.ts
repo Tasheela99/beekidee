@@ -111,8 +111,4 @@ export class KidsDetailsComponent implements OnInit, OnDestroy {
       this.isSubmitting = false;
     }
   }
-
-  navigateToDashboard(): void {
-    this.router.navigate(['/dashboard']);
-  }
 }
