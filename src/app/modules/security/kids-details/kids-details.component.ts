@@ -51,7 +51,6 @@ export class KidsDetailsComponent implements OnInit, OnDestroy {
         this.parentEmail = user.email;
         this.loadKids();
       } else {
-        // Redirect to login if no user is logged in
         this.router.navigate(['/security/sign-in']);
       }
     });
@@ -111,9 +110,5 @@ export class KidsDetailsComponent implements OnInit, OnDestroy {
       console.error('Error saving kid details:', error);
       this.isSubmitting = false;
     }
-  }
-
-  navigateToDashboard(): void {
-    this.router.navigate(['/dashboard']);
   }
 }

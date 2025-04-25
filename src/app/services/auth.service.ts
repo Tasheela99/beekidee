@@ -2,7 +2,7 @@ import {inject, Injectable} from '@angular/core';
 import {
   Auth, createUserWithEmailAndPassword, getAuth,
   GoogleAuthProvider, signInWithEmailAndPassword,
-  signInWithPopup,
+  signInWithPopup, updateProfile,
   UserCredential
 } from '@angular/fire/auth';
 import {
@@ -18,6 +18,7 @@ interface UserData {
   uid: string;
   email: string | null;
   displayName: string | null;
+  phoneNumber: string | null;
   photoURL: string | null;
   lastLogin: string;
   updatedAt: string;
@@ -83,20 +84,19 @@ export class AuthService {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName,
+        phoneNumber: user.phoneNumber,
         photoURL: user.photoURL,
         lastLogin: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
 
       if (!userDoc.exists()) {
-        // For new users, add creation date
         const newUserData: UserData = {
           ...userData,
           createdAt: new Date().toISOString()
         };
         await setDoc(userRef, newUserData);
       } else {
-        // For existing users, update their data
         await setDoc(userRef, userData, { merge: true });
       }
 
@@ -122,22 +122,25 @@ export class AuthService {
     }
   }
 
-  async signUp(email: any, password: any, displayName: any): Promise<void> {
+  async signUp(email: any, password: any, displayName: any,phoneNumber: any): Promise<void> {
     try {
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
 
       if (user) {
+        await updateProfile(user, {
+          displayName: displayName,
+        });
         const userData: UserData = {
           uid: user.uid,
           email: user.email,
           displayName: displayName,
+          phoneNumber: phoneNumber,
           photoURL: user.photoURL,
           lastLogin: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           createdAt: new Date().toISOString(),
         };
-
         const userRef = doc(this.firestore, `users/${user.uid}`);
         await setDoc(userRef, userData);
       }

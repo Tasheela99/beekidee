@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, NgZone} from '@angular/core';
 import {AuthService} from "../../../services/auth.service";
 import {Router, RouterLink} from "@angular/router";
 import {MatButton} from "@angular/material/button";
@@ -12,6 +12,10 @@ import {MatIcon} from "@angular/material/icon";
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {NgIf} from "@angular/common";
 import {Auth} from "@angular/fire/auth";
+import {KidsService} from "../../../services/kids.service";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-sign-in',
@@ -30,7 +34,9 @@ import {Auth} from "@angular/fire/auth";
     RouterLink,
     ReactiveFormsModule,
     NgIf,
-    MatError
+    MatError,
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './sign-in.component.html',
   styleUrls: ['./sign-in.component.scss', '../security.module.style.scss']
@@ -40,30 +46,34 @@ export class SignInComponent {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
-  private auth = inject(AuthService);
+  private authService = inject(AuthService);
+  private kidsService = inject(KidsService);
+  private snackBar = inject(MatSnackBar);
   private router = inject(Router);
+  private ngZone = inject(NgZone);
   loginForm: FormGroup;
   private firebaseAuth = inject(Auth);
+  hidePassword: boolean = true;
 
   async signInWithGoogle(): Promise<void> {
     this.isLoading = true;
     this.errorMessage = '';
     this.successMessage = '';
 
-    try {
-      const result = await this.auth.signInWithGoogle();
-      this.successMessage = 'Successfully signed in!';
+    // try {
+    //   const result = await this.authService.signInWithGoogle();
+    //   this.successMessage = 'Successfully signed in!';
 
-      setTimeout(() => {
-        this.router.navigate(['/console']);
-      }, 1000);
+    //   setTimeout(() => {
+    //     this.router.navigate(['/console']);
+    //   }, 1000);
 
-    } catch (error: any) {
-      this.errorMessage = error.message || 'An error occurred during sign-in';
-      console.error('Sign-in error:', error);
-    } finally {
-      this.isLoading = false;
-    }
+    // } catch (error: any) {
+    //   this.errorMessage = error.message || 'An error occurred during sign-in';
+    //   console.error('Sign-in error:', error);
+    // } finally {
+    //   this.isLoading = false;
+    // }
   }
 
   constructor(private fb: FormBuilder) {
@@ -76,19 +86,42 @@ export class SignInComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const {email, password} = this.loginForm.value;
-      this.auth.signIn(email, password).then(
+      this.authService.signIn(email, password).then(
         (userCredential) => {
           console.log('Login successful!', userCredential);
-          setTimeout(() => {
-            this.router.navigateByUrl('/console');
-          }, 1000);
+
+          this.snackBar.open('Login successful!', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
+
+          this.kidsService.getKidsByParentEmail(email).subscribe((kids) => {
+            console.log('Kids data:', kids);
+            this.ngZone.run(() => {
+              if (kids && kids.length > 0) {
+                this.router.navigateByUrl('/console');
+              } else {
+                this.router.navigateByUrl('/security/kids-details');
+              }
+            });
+          });
+
         },
         (error) => {
-          console.error('Login failed', error);
-          this.errorMessage = error.message; // Display error message
+          this.snackBar.open(`Login failed:`, 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'top'
+          });
         }
       );
     } else {
+      this.snackBar.open('Please fill out the form correctly before submitting.', 'Got it', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'top'
+      });
       console.log('Form is invalid');
     }
   }
