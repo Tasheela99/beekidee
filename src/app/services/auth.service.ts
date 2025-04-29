@@ -34,10 +34,9 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<UserData | null>(null);
   currentUser$ = this.currentUserSubject.asObservable();
   auth = inject(Auth);
+  firestore = inject(Firestore);
 
-  constructor(
-    private firestore: Firestore
-  ) {
+  constructor() {
     this.auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {

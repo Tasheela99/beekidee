@@ -111,7 +111,7 @@ export class SignInComponent {
                 next: (kids) => {
                   console.log('Kids data:', kids);
                   if (kids && kids.length > 0) {
-                    this.router.navigateByUrl('/console');
+                    this.router.navigateByUrl('/kids');
                   } else {
                     this.router.navigateByUrl('/security/kids-details');
                   }
