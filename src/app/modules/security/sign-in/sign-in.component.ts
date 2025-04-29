@@ -16,6 +16,7 @@ import {KidsService} from "../../../services/kids.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {doc, getDoc} from "@angular/fire/firestore";
 
 @Component({
   selector: 'app-sign-in',
@@ -86,8 +87,12 @@ export class SignInComponent {
   onSubmit() {
     if (this.loginForm.valid) {
       const {email, password} = this.loginForm.value;
-      this.authService.signIn(email, password).then(
-        (userCredential) => {
+
+      // Show loading indicator (optional)
+      this.isLoading = true;
+
+      this.authService.signIn(email, password)
+        .then(({ userCredential, isAdmin }) => {
           console.log('Login successful!', userCredential);
 
           this.snackBar.open('Login successful!', 'Close', {
@@ -96,26 +101,54 @@ export class SignInComponent {
             verticalPosition: 'top'
           });
 
-          this.kidsService.getKidsByParentEmail(email).subscribe((kids) => {
-            console.log('Kids data:', kids);
-            this.ngZone.run(() => {
-              if (kids && kids.length > 0) {
-                this.router.navigateByUrl('/console');
-              } else {
-                this.router.navigateByUrl('/security/kids-details');
-              }
-            });
+          this.ngZone.run(() => {
+            if (isAdmin) {
+              // Admin users go directly to console
+              this.router.navigateByUrl('/console');
+            } else {
+              // For regular users, check if they have kids registered
+              this.kidsService.getKidsByParentEmail(email).subscribe({
+                next: (kids) => {
+                  console.log('Kids data:', kids);
+                  if (kids && kids.length > 0) {
+                    this.router.navigateByUrl('/console');
+                  } else {
+                    this.router.navigateByUrl('/security/kids-details');
+                  }
+                  this.isLoading = false;
+                },
+                error: (error) => {
+                  console.error('Error fetching kids data:', error);
+                  this.snackBar.open('Error loading profile data', 'Close', {
+                    duration: 3000
+                  });
+                  this.router.navigateByUrl('/security/kids-details');
+                  this.isLoading = false;
+                }
+              });
+            }
           });
+        })
+        .catch((error) => {
+          this.isLoading = false;
+          console.error('Login error:', error);
+          let errorMessage = 'Invalid email or password';
 
-        },
-        (error) => {
-          this.snackBar.open(`Login failed:`, 'Close', {
+          // Handle specific Firebase auth errors
+          if (error.code === 'auth/user-not-found') {
+            errorMessage = 'No account found with this email';
+          } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Incorrect password';
+          } else if (error.code === 'auth/too-many-requests') {
+            errorMessage = 'Too many failed login attempts. Please try again later';
+          }
+
+          this.snackBar.open(errorMessage, 'Close', {
             duration: 3000,
             horizontalPosition: 'center',
             verticalPosition: 'top'
           });
-        }
-      );
+        });
     } else {
       this.snackBar.open('Please fill out the form correctly before submitting.', 'Got it', {
         duration: 3000,
@@ -123,6 +156,14 @@ export class SignInComponent {
         verticalPosition: 'top'
       });
       console.log('Form is invalid');
+
+      // Optional: highlight invalid fields
+      Object.keys(this.loginForm.controls).forEach(key => {
+        const control = this.loginForm.get(key);
+        if (control?.invalid) {
+          control.markAsTouched();
+        }
+      });
     }
   }
 }
