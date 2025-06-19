@@ -38,7 +38,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/webgazer/dist/webgazer.js"
             ]
           },
           "configurations": {
@@ -102,7 +101,6 @@
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/webgazer/dist/webgazer.js"
             ]
           }
         }
