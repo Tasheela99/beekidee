@@ -54,8 +54,13 @@ const routes: Routes = [
             path: 'plain-task-plus-constructivism-plus-attention',
             loadComponent: () => import('./components/console-dashboard/components/attention-reallocation/attention-reallocation.component').then(c => c.AttentionReallocationComponent)
           },
+          {
+            path: 'lecture-material',
+            loadComponent: () => import('./components/lecture-material-list/lecture-material-list.component').then(c => c.LectureMaterialListComponent)
+          },
         ]
-      }
+      },
+
     ]
   },
 ];

@@ -18,15 +18,12 @@ import { CommonModule } from '@angular/common';
   imports: [
     MatFormFieldModule,
     MatInput,
-    MatSelect,
-    MatOption,
     ReactiveFormsModule,
     MatButton,
     MatCardContent,
     MatCard,
     MatCardHeader,
     MatCardTitle,
-    MatDivider,
     MatIcon,
     CommonModule,
     RouterLink
@@ -54,7 +51,6 @@ export class SignUpComponent {
   onSubmit() {
     if (this.signupForm.valid) {
       const { displayName, email, phoneNumber, password } = this.signupForm.value;
-
       this.authService.signUp(email, password, displayName, phoneNumber)
         .then(() => {
           this.router.navigateByUrl('/security/kids-details');
