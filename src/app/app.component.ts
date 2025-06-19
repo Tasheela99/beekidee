@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import {AfterViewInit, Component, inject, OnInit} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
 import * as faceapi from 'face-api.js';
-import {RouterOutlet} from "@angular/router";
+import {FaceDetectionComponent} from "./test/face-detection/face-detection.component";
+import {AuthService} from "./services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -9,13 +11,19 @@ import {RouterOutlet} from "@angular/router";
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements AfterViewInit {
+
+  private auth = inject(AuthService);
+
+  async ngAfterViewInit() {
+    try {
+      await this.auth.initializeAdmin();
+      console.log('Admin initialization complete');
+    } catch (error) {
+      console.error('Admin initialization failed:', error);
+    }
+  }
+
   title = 'beekidee';
 
-  async loadModels() {
-    await faceapi.nets.tinyFaceDetector.loadFromUri('/assets/models');
-    await faceapi.nets.faceLandmark68Net.loadFromUri('/assets/models');
-    await faceapi.nets.faceExpressionNet.loadFromUri('/assets/models');
-    // Load other models as needed (e.g., faceExpressionNet)
-  }
 }

@@ -223,7 +223,7 @@ export class AuthService {
 
   async initializeAdmin(): Promise<void> {
     try {
-      const adminEmail = "tasheelajay1999@gmail.com";
+      const adminEmail = "admin@gmail.com";
       const adminPassword = "123456789";
       const adminPhoneNumber = "0766308272";
 

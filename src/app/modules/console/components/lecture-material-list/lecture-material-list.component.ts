@@ -1,5 +1,5 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {MatTable, MatTableDataSource, MatTableModule} from '@angular/material/table';
+import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatAnchor, MatButton, MatIconButton} from "@angular/material/button";
