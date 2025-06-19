@@ -26,7 +26,7 @@ export class KidsDetailsComponent implements OnInit, OnDestroy {
   kidForm: FormGroup;
   isSubmitting = false;
   kids: Kid[] = [];
-  parentEmail: string | null = null;
+  parentEmail: any | null = null;
   private userSubscription: Subscription | null = null;
   private kidsSubscription: Subscription | null = null;
 
@@ -110,9 +110,5 @@ export class KidsDetailsComponent implements OnInit, OnDestroy {
       console.error('Error saving kid details:', error);
       this.isSubmitting = false;
     }
-  }
-
-  navigateToDashboard(): void {
-    this.router.navigate(['/dashboard']);
   }
 }
