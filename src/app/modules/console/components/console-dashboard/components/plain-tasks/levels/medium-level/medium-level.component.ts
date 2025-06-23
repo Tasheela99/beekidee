@@ -20,7 +20,6 @@ import {FormsModule} from "@angular/forms";
     CdkDrag,
     NgIf,
     NgClass,
-    CdkDropListGroup,
     FormsModule
   ],
   templateUrl: './medium-level.component.html',
