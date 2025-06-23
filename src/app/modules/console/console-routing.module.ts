@@ -48,7 +48,28 @@ const routes: Routes = [
           },
           {
             path: 'plain-task-plus-constructivism',
-            loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/plain-tasks-plus-constructivism.component').then(c => c.PlainTasksPlusConstructivismComponent)
+            loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/plain-tasks-plus-constructivism.component').then(c => c.PlainTasksPlusConstructivismComponent),
+            children: [
+              {
+                path: '',
+                loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/constructivism-task-context/constructivism-task-context.component').then(c => c.ConstructivismTaskContextComponent),
+                children: [
+                  {path: '', redirectTo: 'pre-intermediate', pathMatch: 'full'},
+                  {
+                    path: 'pre-intermediate',
+                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
+                  },
+                  {
+                    path: 'medium',
+                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
+                  },
+                  {
+                    path: 'intermediate',
+                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/intermediate-level/intermediate-level.component').then(c => c.IntermediateLevelComponent)
+                  },
+                ]
+              },
+            ]
           },
           {
             path: 'plain-task-plus-constructivism-plus-attention',

@@ -2,51 +2,53 @@
   <div class="row">
     <div class="col-12 m-0 p-0">
       <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
-        <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
-          <h1>Find and Count : How many {{ currentQuestion }}?</h1>
-        </div>
-        <div class="image-container" *ngIf="isStarted && counter < dataList.length">
-          <img [src]="dataList[counter].image" alt="Activity Image" class="activity-image" (error)="onImageError($event)">
-        </div>
-        <div class="container-wrapper" *ngIf="isStarted && counter < dataList.length">
-          <div class="example-container2">
-            <h2>Count Tiles</h2>
-            <div class="answer-card">
-              <div
-                cdkDropList
-                [cdkDropListData]="items"
-                class="example-list2"
-                cdkDropListSortingDisabled
-                (cdkDropListDropped)="drop($event)">
-                @for (item of items; track item) {
-                  <div class="example-box2" cdkDrag>
-                    {{ item }}
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-          <div class="example-container">
-            <h2>Your Answer</h2>
-            <div class="answer-card">
-              <div
-                cdkDropList
-                [cdkDropListData]="basket"
-                class="example-list"
-                (cdkDropListDropped)="drop($event)">
-                @for (item of basket; track item) {
-                  <div class="example-box" cdkDrag>
-                    {{ item }}
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-        </div>
         <div class="buttons justify-content-center" *ngIf="!isStarted">
           <button class="start-btn" (click)="start()">
             <span>▶</span> Start Intermediate Level Activities
           </button>
+        </div>
+        <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
+          <h1>Find and Count : How many {{ currentQuestion }}?</h1>
+        </div>
+        <div class="content-row" *ngIf="isStarted && counter < dataList.length">
+          <div class="image-container">
+            <img [src]="dataList[counter].image" alt="Activity Image" class="activity-image" (error)="onImageError($event)">
+          </div>
+          <div class="answer-section">
+            <div class="example-container2">
+              <h2>Count Tiles</h2>
+              <div class="answer-card">
+                <div
+                  cdkDropList
+                  [cdkDropListData]="items"
+                  class="example-list2"
+                  cdkDropListSortingDisabled
+                  (cdkDropListDropped)="drop($event)">
+                  @for (item of items; track item) {
+                    <div class="example-box2" cdkDrag>
+                      {{ item }}
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="example-container">
+              <h2>Your Answer</h2>
+              <div class="answer-card">
+                <div
+                  cdkDropList
+                  [cdkDropListData]="basket"
+                  class="example-list"
+                  (cdkDropListDropped)="drop($event)">
+                  @for (item of basket; track item) {
+                    <div class="example-box" cdkDrag>
+                      {{ item }}
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="footer" *ngIf="isStarted">
           <div class="d-flex align-items-center justify-content-center p-4 gap-2">
