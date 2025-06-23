@@ -1,4 +1,4 @@
- <div class="m-0 p-0 container-fluid full-page">
+<div class="m-0 p-0 container-fluid full-page">
   <div class="row h-100 m-0 g-0">
     <!-- Left Column - Login Form -->
     <div class="col-12 col-md-6 p-0 d-flex align-items-center justify-content-center bee-left-form">
@@ -8,44 +8,46 @@
         </mat-card-header>
         <mat-card-content class="text-center">
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            <div class="col-12 text-center">
-              <mat-form-field appearance="outline" class="example-full-width">
-                <mat-label>Your Email</mat-label>
-                <input matInput formControlName="email">
-                <mat-icon matSuffix class="icon">email</mat-icon>
-                <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
-                  We need your email!
-                </mat-error>
-                <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
-                  Please enter a valid email
-                </mat-error>
-              </mat-form-field>
-            </div>
-            <div class="col-12 text-center">
-              <mat-form-field appearance="outline" class="example-full-width">
-                <mat-label>Secret Password</mat-label>
-                <input matInput
-                       formControlName="password"
-                       [type]="hidePassword ? 'password' : 'text'">
-                <button mat-icon-button matSuffix
-                        (click)="hidePassword = !hidePassword"
-                        [attr.aria-label]="'Hide password'"
-                        [attr.aria-pressed]="hidePassword"
-                        class="icon-button">
-                  <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            <div class="row">
+              <div class="col-12 text-center">
+                <mat-form-field appearance="outline" class="example-full-width">
+                  <mat-label>Your Email</mat-label>
+                  <input matInput formControlName="email">
+                  <mat-icon matSuffix class="icon">email</mat-icon>
+                  <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+                    We need your email!
+                  </mat-error>
+                  <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+                    That doesn't look like an email
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-12 text-center">
+                <mat-form-field appearance="outline" class="example-full-width">
+                  <mat-label>Secret Password</mat-label>
+                  <input matInput
+                         formControlName="password"
+                         [type]="hidePassword ? 'password' : 'text'">
+                  <button mat-icon-button matSuffix
+                          (click)="hidePassword = !hidePassword"
+                          [attr.aria-label]="'Hide password'"
+                          [attr.aria-pressed]="hidePassword"
+                          class="icon-button">
+                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+                  </button>
+                  <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                    Don't forget your secret word!
+                  </mat-error>
+                  <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+                    Make it longer (at least 6 letters)
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-12 text-center">
+                <button mat-raised-button class="example-full-width login-btn" type="submit" [disabled]="loginForm.invalid">
+                  Let's Go!
                 </button>
-                <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
-                  Don't forget your secret word!
-                </mat-error>
-                <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
-                  Make it longer (at least 6 letters)
-                </mat-error>
-              </mat-form-field>
-            </div>
-            <div class="col-12 text-center">
-              <button mat-raised-button class="example-full-width login-btn" type="submit" [disabled]="loginForm.invalid">
-                Let's Go!
-              </button>
+              </div>
             </div>
           </form>
           <div class="col-12 my-2 text-center">
