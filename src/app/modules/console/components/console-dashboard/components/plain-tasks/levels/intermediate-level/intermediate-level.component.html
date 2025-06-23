@@ -3,7 +3,7 @@
     <div class="col-12 m-0 p-0">
       <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
         <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
-          <h1>Find and Count: How many {{ currentQuestion }}?</h1>
+          <h1>Find and Count : How many {{ currentQuestion }}?</h1>
         </div>
         <div class="image-container" *ngIf="isStarted && counter < dataList.length">
           <img [src]="dataList[counter].image" alt="Activity Image" class="activity-image" (error)="onImageError($event)">
