@@ -3,7 +3,7 @@ import {MatToolbar} from "@angular/material/toolbar";
 import {MatIcon} from "@angular/material/icon";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {AuthService} from "../../../../services/auth.service";
-import {Router, RouterLink, RouterOutlet} from "@angular/router";
+import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
 import {MatList, MatListItem} from "@angular/material/list";
 import {NgOptimizedImage} from "@angular/common";
@@ -22,7 +22,8 @@ import {NgOptimizedImage} from "@angular/common";
     MatListItem,
     RouterOutlet,
     RouterLink,
-    NgOptimizedImage
+    NgOptimizedImage,
+    RouterLinkActive
   ],
   templateUrl: './console-dashboard.component.html',
   styleUrl: './console-dashboard.component.scss'

@@ -10,10 +10,6 @@ import {
 } from "@angular/cdk/drag-drop";
 import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 import {NgClass, NgIf} from "@angular/common";
-import {MatButton} from "@angular/material/button";
-import {MatCard, MatCardActions, MatCardContent, MatCardHeader, MatCardModule} from "@angular/material/card";
-import {MatIconModule} from "@angular/material/icon";
-
 
 @Component({
   selector: 'app-pre-intermediate-level',
@@ -22,23 +18,16 @@ import {MatIconModule} from "@angular/material/icon";
     CdkDropList,
     CdkDrag,
     NgIf,
-    MatButton,
     NgClass,
     CdkDropListGroup,
-    MatCard,
-    MatCardHeader,
-    MatCardContent,
-    MatCardActions,
-    MatIconModule,
-    MatCardModule,
   ],
   templateUrl: './pre-intermediate-level.component.html',
   styleUrl: './pre-intermediate-level.component.scss'
 })
 export class PreIntermediateLevelComponent {
-  videoId: string = '';
   items = [''];
-  basket = [''];
+  videoId: string = '';
+  basket: string[] = []; // Explicitly typed as string array
   searchItem = '';
   itemFound = false;
   counter = 0;
@@ -56,6 +45,11 @@ export class PreIntermediateLevelComponent {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      // If dropping into basket, clear it first to ensure only one item
+      if (event.container.data === this.basket) {
+        this.basket = [];
+      }
+
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
@@ -63,34 +57,30 @@ export class PreIntermediateLevelComponent {
         event.currentIndex,
       );
     }
-    this.checkAnswer()
+    this.checkAnswer();
   }
 
   checkAnswer() {
-    for (let i = 0; i < this.basket.length; i++) {
-      if (this.basket[i] === this.searchItem) {
-        this.itemFound = true;
-        this.setAlerts(this.itemFound)
-        break;
-      } else {
-        this.setAlerts(this.itemFound)
-      }
+    // Validate the single item in basket against searchItem
+    if (this.basket.length === 1 && this.basket[0] === this.searchItem) {
+      this.itemFound = true;
+    } else {
+      this.itemFound = false;
     }
+    this.setAlerts(this.itemFound);
   }
 
   setAlerts(answer: boolean) {
     if (answer) {
-      console.log(`${this.searchItem} is available in the items array.`);
+      console.log(`${this.searchItem} is the correct answer.`);
       this.isAnswerCorrect = true;
-
       this.openAnimationDialog(true, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fhappy-start.webm?alt=media&token=f369ae30-66d3-4642-9c03-8405c18bf203');
-
       setTimeout(() => {
         this.moveToNext();
       }, 3000);
-
     } else {
-      console.log(`${this.searchItem} is not available in the items array.`);
+      console.log(`${this.basket.length > 0 ? this.basket[0] : 'No item'} is not the correct answer.`);
+      this.isAnswerCorrect = false;
       this.openAnimationDialog(false, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fnot-correct.webm?alt=media&token=fc447df6-587a-4429-a56e-9f178fe12073');
     }
   }
@@ -112,21 +102,19 @@ export class PreIntermediateLevelComponent {
 
   dataList: any = [
     {
-      itemlist: ['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados', 'Bananas'],
-      searchItem: 'Onions'
+      itemlist: ['5', '1', '3'],
+      searchItem: '3',
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree.jpg?alt=media&token=d9538c92-a157-447d-9f9d-fb1881b1159d'
     },
     {
-      itemlist: ['Red', 'Green', 'Blue', 'Yellow', 'White', 'Black'],
-      searchItem: 'Blue'
+      itemlist: ['4', '5', '2'],
+      searchItem: '4',
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree(4).png?alt=media&token=4c8faa42-c5c5-43b3-ae4f-bbc747029585'
     },
-    {
-      itemlist: ['1', '10', '20', '30', '50', '60'],
-      searchItem: '50'
-    },
-  ]
+  ];
 
   start() {
-    this.items = this.dataList[0].itemlist;
+    this.items = this.shuffleArray([...this.dataList[0].itemlist]);
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
   }
@@ -134,8 +122,7 @@ export class PreIntermediateLevelComponent {
   moveToNext() {
     this.counter += 1;
     this.reset();
-
-    this.items = this.dataList[this.counter].itemlist;
+    this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
     this.searchItem = this.dataList[this.counter].searchItem;
   }
 
@@ -151,21 +138,18 @@ export class PreIntermediateLevelComponent {
     this.reset();
     this.counter = 0;
     this.isStarted = false;
-
     this.dataList = [
       {
-        itemlist: ['Carrots', 'Tomatoes', 'Onions', 'Apples', 'Avocados', 'Bananas'],
-        searchItem: 'Onions'
+        itemlist: ['5', '1', '3'],
+        searchItem: '3',
+        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree.jpg?alt=media&token=d9538c92-a157-447d-9f9d-fb1881b1159d'
       },
       {
-        itemlist: ['Red', 'Green', 'Blue', 'Yellow', 'White', 'Black'],
-        searchItem: 'Blue'
+        itemlist: ['4', '5', '2'],
+        searchItem: '4',
+        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree(4).png?alt=media&token=4c8faa42-c5c5-43b3-ae4f-bbc747029585'
       },
-      {
-        itemlist: ['1', '10', '20', '30', '50', '60'],
-        searchItem: '50'
-      },
-    ]
+    ];
   }
 
   extractVideoId(event: Event): void {
@@ -173,5 +157,13 @@ export class PreIntermediateLevelComponent {
     const url = inputElement?.value || '';
     const videoIdMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/);
     this.videoId = videoIdMatch ? videoIdMatch[1] : '';
+  }
+
+  private shuffleArray(array: string[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
   }
 }

@@ -8,11 +8,20 @@ import {MatDialog} from "@angular/material/dialog";
 import {ConsoleService, Lesson} from "../../../../services/console.service";
 import {DatePipe} from "@angular/common";
 import {MatIcon} from "@angular/material/icon";
+import {
+  CdkCell,
+  CdkCellDef,
+  CdkColumnDef,
+  CdkHeaderCell,
+  CdkHeaderCellDef,
+  CdkHeaderRow, CdkHeaderRowDef, CdkRow, CdkRowDef,
+  CdkTable
+} from "@angular/cdk/table";
 
 @Component({
   selector: 'app-lecture-material-list',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatButton, MatAnchor, DatePipe, MatIconButton, MatIcon],
+  imports: [MatFormFieldModule, MatInputModule, MatTableModule, MatButton, MatAnchor, DatePipe, MatIconButton, MatIcon, CdkTable, CdkColumnDef, CdkHeaderCell, CdkCell, CdkCellDef, CdkHeaderCellDef, CdkHeaderRow, CdkRow, CdkRowDef, CdkHeaderRowDef],
   templateUrl: './lecture-material-list.component.html',
   styleUrl: './lecture-material-list.component.scss'
 })
