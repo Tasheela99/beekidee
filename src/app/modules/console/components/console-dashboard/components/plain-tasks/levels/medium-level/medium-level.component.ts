@@ -20,7 +20,8 @@ import {FormsModule} from "@angular/forms";
     CdkDrag,
     NgIf,
     NgClass,
-    FormsModule
+    FormsModule,
+    CdkDropListGroup // Added missing import
   ],
   templateUrl: './medium-level.component.html',
   styleUrl: './medium-level.component.scss'
@@ -56,19 +57,47 @@ export class MediumLevelComponent {
   ];
 
   drop(event: CdkDragDrop<string[]>) {
+    console.log('Drop event triggered', event);
+    console.log('Previous container data:', event.previousContainer.data);
+    console.log('Current container data:', event.container.data);
+    console.log('Item being moved:', event.previousContainer.data[event.previousIndex]);
+
     if (event.previousContainer === event.container) {
+      // Reordering within the same container
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      // Moving between containers
+      const itemBeingMoved = event.previousContainer.data[event.previousIndex];
+
+      // If dropping into basket, clear it first to ensure only one item
       if (event.container.data === this.basket) {
-        this.basket = []; // Clear basket to allow only one number
+        // Return any existing item in basket back to items list
+        if (this.basket.length > 0) {
+          this.items.push(...this.basket);
+        }
+        this.basket = [];
+
+        // Now add the new item to basket
+        transferArrayItem(
+          event.previousContainer.data,
+          this.basket,
+          event.previousIndex,
+          0
+        );
+      } else {
+        // Moving from basket back to items
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
       }
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
     }
+
+    console.log('Items after drop:', this.items);
+    console.log('Basket after drop:', this.basket);
+
     this.checkAnswer();
   }
 
@@ -116,60 +145,48 @@ export class MediumLevelComponent {
     this.items = this.shuffleArray(['1', '4', '5', '7']); // Numbers under 10, including 7
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
+    this.basket = []; // Ensure basket is empty when starting
     this.errorMessage = ''; // Clear any previous error
   }
 
   moveToNext() {
-    this.counter += 1;
-    if (this.counter >= this.dataList.length) {
-      this.reset();
-    } else {
+    if (this.counter + 1 < this.dataList.length) {
+      this.counter += 1;
       this.reset();
       this.items = this.shuffleArray(['1', '4', '5', '7']);
       this.searchItem = this.dataList[this.counter].searchItem;
+    } else {
+      // Game completed
+      console.log('Game completed!');
+      this.reStartGame();
     }
   }
 
   reset() {
     this.isAnswerCorrect = false;
     this.itemFound = false;
-    this.items = [];
-    this.searchItem = '';
     this.basket = [];
+    this.errorMessage = '';
   }
 
   reStartGame() {
     this.reset();
     this.counter = 0;
     this.isStarted = false;
-    this.dataList = [
-      {
-        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
-        searchItem: 'A',
-        correctCount: 7
-      },
-      {
-        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
-        searchItem: 'B',
-        correctCount: 5
-      },
-      {
-        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
-        searchItem: 'C',
-        correctCount: 4
-      },
-    ];
+    this.items = [];
+    this.searchItem = '';
   }
 
   onImageError(event: Event) {
     this.errorMessage = 'Error loading image. Please check the URL or try again later.';
   }
 
-  private shuffleArray(array: string[]) {
-    for (let i = array.length - 1; i > 0; i--) {
+  private shuffleArray(array: string[]): string[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return array;
+    return shuffled;
   }
 }
