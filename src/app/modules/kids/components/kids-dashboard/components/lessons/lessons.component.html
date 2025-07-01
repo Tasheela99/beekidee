@@ -1,36 +1,106 @@
-<div class="container-fluid">
+<div class="kindergarten-container">
   <div class="row">
     <div class="col-12 my-2">
       <div class="container">
-        <div class="row">
-          <div class="col-12">
-            <owl-carousel-o [options]="customOptions">
-              <ng-template carouselSlide *ngFor="let lesson of lessons">
-                <mat-card appearance="outlined" (click)="selectLesson(lesson)" style="cursor: pointer;">
-                  <mat-card-header>
-                    <mat-card-title>{{ lesson.title }}</mat-card-title>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <p>{{ lesson.description }}</p>
-                  </mat-card-content>
-                </mat-card>
-              </ng-template>
-            </owl-carousel-o>
+        <!-- ශිෂ්‍යයන්ට ආදරය කළ හැකි හිසතෙල් -->
+        <div class="row mb-4">
+          <div class="col-12 text-center">
+            <h1 class="kindergarten-title">
+              🌟 විනෝදජනක ඉගෙනුම් වීඩියෝ 🌟
+            </h1>
+            <div class="decorative-line"></div>
           </div>
         </div>
+
+        <!-- කරුසල් කොටස -->
+        <div class="row">
+          <div class="col-12">
+            <div class="carousel-wrapper">
+              <h2 class="section-title">
+                🎬 ඔබේ ගමන තෝරන්න!
+              </h2>
+              <owl-carousel-o [options]="customOptions" class="kindergarten-carousel">
+                <ng-template carouselSlide *ngFor="let lesson of lessons">
+                  <mat-card
+                    appearance="outlined"
+                    (click)="selectLesson(lesson)"
+                    class="lesson-card"
+                    [class.selected]="selectedLesson?.id === lesson.id">
+                    <div class="card-decoration"></div>
+                    <mat-card-header>
+                      <mat-card-title class="lesson-title">
+                        {{ lesson.title }}
+                      </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <p class="lesson-description">{{ lesson.description }}</p>
+<!--                      <div class="play-button">-->
+<!--                        <span class="play-icon">▶️</span>-->
+<!--                        <span class="play-text">නරඹන්න!</span>-->
+<!--                      </div>-->
+                    </mat-card-content>
+                  </mat-card>
+                </ng-template>
+              </owl-carousel-o>
+            </div>
+          </div>
+        </div>
+
+        <!-- වීඩියෝ ප්ලේයර් කොටස -->
         <div class="my-2 row">
-          <div class="col-12 d-flex align-items-center justify-content-center" style="height: 80vh">
-            <mat-card class="example-card w-100" appearance="outlined" style="height: 100%" *ngIf="selectedLesson">
-              <mat-card-header>
-                <mat-card-title>{{ selectedLesson.title }}</mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <p>{{ selectedLesson.content }}</p>
+          <div class="col-12 d-flex align-items-center justify-content-center video-section">
+            <mat-card
+              class="video-card w-100"
+              appearance="outlined"
+              *ngIf="selectedLesson">
+
+              <div class="video-card-decoration"></div>
+
+<!--              <mat-card-header class="video-header">-->
+<!--                <mat-card-title class="video-title">-->
+<!--                  🎥 {{ selectedLesson.title }}-->
+<!--                </mat-card-title>-->
+<!--              </mat-card-header>-->
+
+              <mat-card-content class="video-content">
+                <p class="video-subtitle">{{ selectedLesson.subtitle }}</p>
+
+                <div class="video-wrapper">
+                  <video
+                    width="100%"
+                    height="auto"
+                    controls
+                    [src]="selectedLesson.lessonUrl"
+                    class="kindergarten-video"
+                  >
+                    ඔබේ බ්‍රව්සරය මෙම වීඩියෝව ප්‍රදර්ශනය නොකරයි.
+                  </video>
+                </div>
               </mat-card-content>
             </mat-card>
+
+            <!-- වීඩියෝවක් තෝරා නොමැති විට පෙන්වන්න -->
+            <div class="no-video-placeholder w-100" *ngIf="!selectedLesson">
+              <div class="placeholder-content">
+                <div class="placeholder-icon">🎬</div>
+                <h3>නරඹන්න සවිස්තර වීඩියෝවක් තෝරන්න</h3>
+                <p>ඉහත පාඩමක ක්ලික් කිරීමෙන් ඔබගේ ඉගෙනීම ආරම්භ කරන්න</p>
+                <div class="bouncing-arrow">👆</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- උඩින් පාවෙන අලංකාර භාවිතයන් -->
+<!--  <div class="floating-decorations">-->
+<!--    <div class="floating-star star-1">⭐</div>-->
+<!--    <div class="floating-star star-2">🌟</div>-->
+<!--    <div class="floating-star star-3">✨</div>-->
+<!--    <div class="floating-rainbow">🌈</div>-->
+<!--    <div class="floating-cloud cloud-1">☁️</div>-->
+<!--    <div class="floating-cloud cloud-2">☁️</div>-->
+<!--  </div>-->
+<!--</div>-->
