@@ -25,9 +25,9 @@ import {NgClass, NgIf} from "@angular/common";
   styleUrl: './pre-intermediate-level.component.scss'
 })
 export class PreIntermediateLevelComponent {
-  items = [''];
+  items: string[] = [];
   videoId: string = '';
-  basket: string[] = []; // Explicitly typed as string array
+  basket: string[] = [];
   searchItem = '';
   itemFound = false;
   counter = 0;
@@ -42,21 +42,47 @@ export class PreIntermediateLevelComponent {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    console.log('Drop event triggered', event);
+    console.log('Previous container data:', event.previousContainer.data);
+    console.log('Current container data:', event.container.data);
+    console.log('Item being moved:', event.previousContainer.data[event.previousIndex]);
+
     if (event.previousContainer === event.container) {
+      // Reordering within the same container
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      // Moving between containers
+      const itemBeingMoved = event.previousContainer.data[event.previousIndex];
+
       // If dropping into basket, clear it first to ensure only one item
       if (event.container.data === this.basket) {
+        // Return any existing item in basket back to items list
+        if (this.basket.length > 0) {
+          this.items.push(...this.basket);
+        }
         this.basket = [];
-      }
 
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+        // Now add the new item to basket
+        transferArrayItem(
+          event.previousContainer.data,
+          this.basket,
+          event.previousIndex,
+          0
+        );
+      } else {
+        // Moving from basket back to items
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+      }
     }
+
+    console.log('Items after drop:', this.items);
+    console.log('Basket after drop:', this.basket);
+
     this.checkAnswer();
   }
 
@@ -71,19 +97,14 @@ export class PreIntermediateLevelComponent {
   }
 
   setAlerts(answer: boolean) {
+    this.isAnswerCorrect = answer;
     if (answer) {
-      console.log(`${this.searchItem} is the correct answer.`);
-      this.isAnswerCorrect = true;
-      this.openAnimationDialog(true, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fhappy-start.webm?alt=media&token=f369ae30-66d3-4642-9c03-8405c18bf203');
       setTimeout(() => {
         this.moveToNext();
-      }, 3000);
-    } else {
-      console.log(`${this.basket.length > 0 ? this.basket[0] : 'No item'} is not the correct answer.`);
-      this.isAnswerCorrect = false;
-      this.openAnimationDialog(false, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fnot-correct.webm?alt=media&token=fc447df6-587a-4429-a56e-9f178fe12073');
+      }, 1000);
     }
   }
+
 
   private openAnimationDialog(isCorrect: boolean, animationUrl: string): void {
     const dialogRef = this.dialog.open(AnimationDialogComponent, {
@@ -117,20 +138,25 @@ export class PreIntermediateLevelComponent {
     this.items = this.shuffleArray([...this.dataList[0].itemlist]);
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
+    this.basket = []; // Ensure basket is empty when starting
   }
 
   moveToNext() {
-    this.counter += 1;
-    this.reset();
-    this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
-    this.searchItem = this.dataList[this.counter].searchItem;
+    if (this.counter + 1 < this.dataList.length) {
+      this.counter += 1;
+      this.reset();
+      this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
+      this.searchItem = this.dataList[this.counter].searchItem;
+    } else {
+      // Game completed
+      console.log('Game completed!');
+      this.reStartGame();
+    }
   }
 
   reset() {
     this.isAnswerCorrect = false;
     this.itemFound = false;
-    this.items = [];
-    this.searchItem = '';
     this.basket = [];
   }
 
@@ -138,18 +164,8 @@ export class PreIntermediateLevelComponent {
     this.reset();
     this.counter = 0;
     this.isStarted = false;
-    this.dataList = [
-      {
-        itemlist: ['5', '1', '3'],
-        searchItem: '3',
-        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree.jpg?alt=media&token=d9538c92-a157-447d-9f9d-fb1881b1159d'
-      },
-      {
-        itemlist: ['4', '5', '2'],
-        searchItem: '4',
-        image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree(4).png?alt=media&token=4c8faa42-c5c5-43b3-ae4f-bbc747029585'
-      },
-    ];
+    this.items = [];
+    this.searchItem = '';
   }
 
   extractVideoId(event: Event): void {
@@ -159,11 +175,12 @@ export class PreIntermediateLevelComponent {
     this.videoId = videoIdMatch ? videoIdMatch[1] : '';
   }
 
-  private shuffleArray(array: string[]) {
-    for (let i = array.length - 1; i > 0; i--) {
+  private shuffleArray(array: string[]): string[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return array;
+    return shuffled;
   }
 }
