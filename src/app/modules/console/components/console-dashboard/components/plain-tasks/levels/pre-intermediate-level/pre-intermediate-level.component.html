@@ -2,6 +2,62 @@
   <div class="row">
     <div class="col-12 m-0 p-0">
       <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
+<<<<<<< HEAD
+=======
+        <div *ngIf="searchItem!=''" class="header justify-content-center">
+          <h1>Find {{ searchItem }}</h1>
+        </div>
+        <div *ngIf="isStarted && counter < dataList.length" class="image-container">
+          <img [src]="dataList[counter].image" alt="Tree Image" class="tree-image">
+        </div>
+
+        <!-- Wrap both drop lists in CdkDropListGroup -->
+        <div *ngIf="isStarted && counter < dataList.length" class="container-wrapper" cdkDropListGroup>
+          <div class="example-container2">
+            <h2>Answer List</h2>
+            <div class="answer-card">
+              <div
+                cdkDropList
+                #itemsList="cdkDropList"
+                id="items-list"
+                [cdkDropListData]="items"
+                class="example-list2"
+                [cdkDropListConnectedTo]="[basketList]"
+                (cdkDropListDropped)="drop($event)">
+                @for (item of items; track item) {
+                  <div class="example-box2" cdkDrag>
+                    {{ item }}
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="example-container">
+            <h2>Your Answer</h2>
+            <div class="answer-card">
+              <div
+                cdkDropList
+                #basketList="cdkDropList"
+                id="basket-list"
+                [cdkDropListData]="basket"
+                class="example-list"
+                [cdkDropListConnectedTo]="[itemsList]"
+                (cdkDropListDropped)="drop($event)">
+                @for (item of basket; track item) {
+                  <div class="example-box" cdkDrag>
+                    {{ item }}
+                  </div>
+                }
+                <!-- Show placeholder when basket is empty -->
+                <div *ngIf="basket.length === 0" class="drop-placeholder">
+                  Drop your answer here
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+>>>>>>> dfb2982ec7d34ee1c2fe460811e494dcf6f7669c
         <div class="buttons justify-content-center" *ngIf="!isStarted">
           <button class="start-btn" (click)="start()">
             <span>▶</span> Start Pre Intermediate Level Activities
@@ -55,7 +111,7 @@
             <button class="reset" (click)="reStartGame()" *ngIf="counter >= dataList.length">
               <span>⟳</span> Re Start
             </button>
-            <button class="next" *ngIf="counter < dataList.length" (click)="moveToNext()">
+            <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
               <span>→</span> Next Question
             </button>
           </div>

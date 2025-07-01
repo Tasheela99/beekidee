@@ -175,6 +175,25 @@ export class ConsoleService {
     }
   }
 
+  public async getLessonsByLevelTypeAndSubject(level: string, type: string, subject: string): Promise<Lesson[]> {
+    try {
+      const lessonsRef = collection(this.firestore, 'lessons');
+      const q = query(
+        lessonsRef,
+        where('level', '==', level),
+        where('type', '==', type),
+        where('subject', '==', subject)
+      );
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map(doc => doc.data() as Lesson);
+    } catch (error) {
+      console.error('Error fetching lessons by level, type, and subject:', error);
+      return [];
+    }
+  }
+
+
 
 
 }
