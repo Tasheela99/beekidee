@@ -10,6 +10,8 @@ import {
 } from "@angular/cdk/drag-drop";
 import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 import {NgClass, NgIf} from "@angular/common";
+import { Auth, user } from '@angular/fire/auth';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-pre-intermediate-level',
@@ -27,7 +29,7 @@ import {NgClass, NgIf} from "@angular/common";
 export class PreIntermediateLevelComponent {
   items: string[] = [];
   videoId: string = '';
-  basket: string[] = [];
+  basket: string[] = []; // This will always contain 0 or 1 item
   searchItem = '';
   itemFound = false;
   counter = 0;
@@ -35,7 +37,25 @@ export class PreIntermediateLevelComponent {
   isAnswerCorrect = false;
   showCamera = true;
 
+  // Marking system properties
+  totalMarks = 0;
+  maxMarksPerQuestion = 10; // You can adjust this value
+  currentUser$: Observable<any>;
+  userUid: string | null = null;
+
   dialog = inject(MatDialog);
+  private auth = inject(Auth);
+
+  constructor() {
+    // Get current user observable
+    this.currentUser$ = user(this.auth);
+
+    // Subscribe to user changes to get UID
+    this.currentUser$.subscribe(user => {
+      this.userUid = user ? user.uid : null;
+      console.log('Current user UID:', this.userUid);
+    });
+  }
 
   toggleCameraVisibility() {
     this.showCamera = !this.showCamera;
@@ -54,21 +74,29 @@ export class PreIntermediateLevelComponent {
       // Moving between containers
       const itemBeingMoved = event.previousContainer.data[event.previousIndex];
 
-      // If dropping into basket, clear it first to ensure only one item
+      // If dropping into basket, ensure only one item is allowed
       if (event.container.data === this.basket) {
         // Return any existing item in basket back to items list
         if (this.basket.length > 0) {
           this.items.push(...this.basket);
+          this.basket = []; // Clear the basket
         }
-        this.basket = [];
 
-        // Now add the new item to basket
+        // Add the new item to basket (ensuring only one item)
         transferArrayItem(
           event.previousContainer.data,
           this.basket,
           event.previousIndex,
           0
         );
+
+        // Double-check: ensure basket never has more than one item
+        if (this.basket.length > 1) {
+          // This shouldn't happen, but as a safety measure
+          const latestItem = this.basket.pop()!;
+          this.items.push(...this.basket);
+          this.basket = [latestItem];
+        }
       } else {
         // Moving from basket back to items
         transferArrayItem(
@@ -99,12 +127,50 @@ export class PreIntermediateLevelComponent {
   setAlerts(answer: boolean) {
     this.isAnswerCorrect = answer;
     if (answer) {
+      // Award marks for correct answer
+      this.awardMarks();
+
       setTimeout(() => {
         this.moveToNext();
       }, 1000);
     }
   }
 
+  private awardMarks(): void {
+    this.totalMarks += this.maxMarksPerQuestion;
+
+    // Log the marks with user UID
+    console.log('=== CORRECT ANSWER LOGGED ===');
+    console.log('User UID:', this.userUid);
+    console.log('Question Number:', this.counter + 1);
+    console.log('Correct Answer:', this.searchItem);
+    console.log('Marks Awarded:', this.maxMarksPerQuestion);
+    console.log('Total Marks:', this.totalMarks);
+    console.log('Timestamp:', new Date().toISOString());
+    console.log('=============================');
+
+    // You can also store this data in an array or send it to Firebase
+    this.logAnswerToFirebase();
+  }
+
+  private logAnswerToFirebase(): void {
+    // Example of data structure you might want to store
+    const answerLog = {
+      userUid: this.userUid,
+      questionNumber: this.counter + 1,
+      correctAnswer: this.searchItem,
+      marksAwarded: this.maxMarksPerQuestion,
+      totalMarks: this.totalMarks,
+      timestamp: new Date().toISOString(),
+      gameType: 'pre-intermediate-level'
+    };
+
+    // Here you would typically save to Firestore
+    // Example (you'll need to inject Firestore):
+    // this.firestore.collection('user-answers').add(answerLog);
+
+    console.log('Answer log ready for Firebase:', answerLog);
+  }
 
   private openAnimationDialog(isCorrect: boolean, animationUrl: string): void {
     const dialogRef = this.dialog.open(AnimationDialogComponent, {
@@ -139,6 +205,9 @@ export class PreIntermediateLevelComponent {
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
     this.basket = []; // Ensure basket is empty when starting
+    this.totalMarks = 0; // Reset marks when starting new game
+
+    console.log('Game started by user:', this.userUid);
   }
 
   moveToNext() {
@@ -150,14 +219,39 @@ export class PreIntermediateLevelComponent {
     } else {
       // Game completed
       console.log('Game completed!');
+      this.logGameCompletion();
       this.reStartGame();
     }
+  }
+
+  private logGameCompletion(): void {
+    console.log('=== GAME COMPLETED ===');
+    console.log('User UID:', this.userUid);
+    console.log('Final Total Marks:', this.totalMarks);
+    console.log('Total Questions:', this.dataList.length);
+    console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
+    console.log('Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
+    console.log('Completion Time:', new Date().toISOString());
+    console.log('=====================');
+
+    // You can store the final game results here
+    const gameResult = {
+      userUid: this.userUid,
+      totalMarks: this.totalMarks,
+      maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
+      percentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
+      totalQuestions: this.dataList.length,
+      completionTime: new Date().toISOString(),
+      gameType: 'pre-intermediate-level'
+    };
+
+    console.log('Game result ready for Firebase:', gameResult);
   }
 
   reset() {
     this.isAnswerCorrect = false;
     this.itemFound = false;
-    this.basket = [];
+    this.basket = []; // Always ensure basket is empty on reset
   }
 
   reStartGame() {
@@ -166,6 +260,7 @@ export class PreIntermediateLevelComponent {
     this.isStarted = false;
     this.items = [];
     this.searchItem = '';
+    this.totalMarks = 0; // Reset marks when restarting
   }
 
   extractVideoId(event: Event): void {
@@ -182,5 +277,25 @@ export class PreIntermediateLevelComponent {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+  }
+
+  // Helper method to get the current selected answer (if any)
+  get selectedAnswer(): string | null {
+    return this.basket.length === 1 ? this.basket[0] : null;
+  }
+
+  // Helper method to check if an answer is selected
+  get hasSelectedAnswer(): boolean {
+    return this.basket.length === 1;
+  }
+
+  // Helper method to get current marks (for displaying in template if needed)
+  get currentTotalMarks(): number {
+    return this.totalMarks;
+  }
+
+  // Helper method to get max possible marks
+  get maxPossibleMarks(): number {
+    return this.dataList.length * this.maxMarksPerQuestion;
   }
 }
