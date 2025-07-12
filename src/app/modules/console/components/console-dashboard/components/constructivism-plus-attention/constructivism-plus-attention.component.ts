@@ -49,10 +49,10 @@ import { ConsoleService } from "../../../../../../services/console.service";
       loadApi: true
     }
   }],
-  templateUrl: './plain-tasks-plus-constructivism.component.html',
-  styleUrl: './plain-tasks-plus-constructivism.component.scss'
+  templateUrl: './constructivism-plus-attention.component.html',
+  styleUrl: './constructivism-plus-attention.component.scss'
 })
-export class PlainTasksPlusConstructivismComponent implements OnInit {
+export class ConstructivismPlusAttentionComponent implements OnInit {
   videoId: string = '';
   items = [''];
   basket = [''];
