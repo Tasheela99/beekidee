@@ -38,6 +38,8 @@ export class SignUpComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private fb = inject(FormBuilder);
+  animals = ['🐸', '🦄', '🐙', '🦋', '🐨', '🦁', '🐯', '🐼'];
+  currentAnimal = 0;
 
   constructor() {
     this.signupForm = this.fb.group({
@@ -46,6 +48,11 @@ export class SignUpComponent {
       phoneNumber: ['', [Validators.required, Validators.min(1000000000)]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+
+    // Animate animals
+    setInterval(() => {
+      this.currentAnimal = (this.currentAnimal + 1) % this.animals.length;
+    }, 2000);
   }
 
   onSubmit() {
@@ -59,5 +66,16 @@ export class SignUpComponent {
           console.error('Sign-up failed:', error);
         });
     }
+  }
+
+  getFieldError(fieldName: string): string {
+    const field = this.signupForm.get(fieldName);
+    if (field?.errors && field.touched) {
+      if (field.errors['required']) return `${fieldName === 'displayName' ? 'We need to know your name!' : fieldName === 'email' ? 'We need your email!' : fieldName === 'phoneNumber' ? 'We need your phoneNumber!' : 'This field is required!'}`;
+      if (field.errors['email']) return 'That doesn\'t look like an email';
+      if (field.errors['min']) return 'You must enter 10 numbers';
+      if (field.errors['minlength']) return 'Make it longer (at least 6 letters)';
+    }
+    return '';
   }
 }

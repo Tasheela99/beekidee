@@ -56,13 +56,6 @@
             </div>
           </div>
         </div>
-
-        <div class="buttons justify-content-center" *ngIf="!isStarted">
-          <button class="start-btn" (click)="start()">
-            <span>▶</span> Start Intermediate Level Activities
-          </button>
-        </div>
-
         <div class="footer" *ngIf="isStarted">
           <div class="d-flex align-items-center justify-content-center p-4 gap-2">
             <button class="reset" (click)="reStartGame()">
