@@ -8,10 +8,10 @@ import {
   moveItemInArray,
   transferArrayItem
 } from "@angular/cdk/drag-drop";
-import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 import {NgClass, NgIf} from "@angular/common";
 import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 
 @Component({
   selector: 'app-pre-intermediate-level',
@@ -29,7 +29,7 @@ import { Observable } from 'rxjs';
 export class PreIntermediateLevelComponent {
   items: string[] = [];
   videoId: string = '';
-  basket: string[] = []; // This will always contain 0 or 1 item
+  basket: string[] = [];
   searchItem = '';
   itemFound = false;
   counter = 0;
@@ -39,7 +39,7 @@ export class PreIntermediateLevelComponent {
 
   // Marking system properties
   totalMarks = 0;
-  maxMarksPerQuestion = 10; // You can adjust this value
+  maxMarksPerQuestion = 10;
   currentUser$: Observable<any>;
   userUid: string | null = null;
 
@@ -47,10 +47,7 @@ export class PreIntermediateLevelComponent {
   private auth = inject(Auth);
 
   constructor() {
-    // Get current user observable
     this.currentUser$ = user(this.auth);
-
-    // Subscribe to user changes to get UID
     this.currentUser$.subscribe(user => {
       this.userUid = user ? user.uid : null;
       console.log('Current user UID:', this.userUid);
@@ -63,26 +60,16 @@ export class PreIntermediateLevelComponent {
 
   drop(event: CdkDragDrop<string[]>) {
     console.log('Drop event triggered', event);
-    console.log('Previous container data:', event.previousContainer.data);
-    console.log('Current container data:', event.container.data);
-    console.log('Item being moved:', event.previousContainer.data[event.previousIndex]);
 
     if (event.previousContainer === event.container) {
-      // Reordering within the same container
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
-      // Moving between containers
-      const itemBeingMoved = event.previousContainer.data[event.previousIndex];
-
-      // If dropping into basket, ensure only one item is allowed
       if (event.container.data === this.basket) {
-        // Return any existing item in basket back to items list
         if (this.basket.length > 0) {
           this.items.push(...this.basket);
-          this.basket = []; // Clear the basket
+          this.basket = [];
         }
 
-        // Add the new item to basket (ensuring only one item)
         transferArrayItem(
           event.previousContainer.data,
           this.basket,
@@ -90,15 +77,12 @@ export class PreIntermediateLevelComponent {
           0
         );
 
-        // Double-check: ensure basket never has more than one item
         if (this.basket.length > 1) {
-          // This shouldn't happen, but as a safety measure
           const latestItem = this.basket.pop()!;
           this.items.push(...this.basket);
           this.basket = [latestItem];
         }
       } else {
-        // Moving from basket back to items
         transferArrayItem(
           event.previousContainer.data,
           event.container.data,
@@ -115,7 +99,6 @@ export class PreIntermediateLevelComponent {
   }
 
   checkAnswer() {
-    // Validate the single item in basket against searchItem
     if (this.basket.length === 1 && this.basket[0] === this.searchItem) {
       this.itemFound = true;
     } else {
@@ -126,20 +109,26 @@ export class PreIntermediateLevelComponent {
 
   setAlerts(answer: boolean) {
     this.isAnswerCorrect = answer;
-    if (answer) {
-      // Award marks for correct answer
-      this.awardMarks();
 
+    // Show animation dialog
+    this.openAnimationDialog(answer);
+
+    if (answer) {
+      this.awardMarks();
       setTimeout(() => {
         this.moveToNext();
-      }, 1000);
+      }, 3500); // Increased timeout to allow animation to complete
+    } else {
+      // For wrong answers, you might want to reset after showing animation
+      setTimeout(() => {
+        this.reset();
+      }, 3500);
     }
   }
 
   private awardMarks(): void {
     this.totalMarks += this.maxMarksPerQuestion;
 
-    // Log the marks with user UID
     console.log('=== CORRECT ANSWER LOGGED ===');
     console.log('User UID:', this.userUid);
     console.log('Question Number:', this.counter + 1);
@@ -149,12 +138,10 @@ export class PreIntermediateLevelComponent {
     console.log('Timestamp:', new Date().toISOString());
     console.log('=============================');
 
-    // You can also store this data in an array or send it to Firebase
     this.logAnswerToFirebase();
   }
 
   private logAnswerToFirebase(): void {
-    // Example of data structure you might want to store
     const answerLog = {
       userUid: this.userUid,
       questionNumber: this.counter + 1,
@@ -165,21 +152,18 @@ export class PreIntermediateLevelComponent {
       gameType: 'pre-intermediate-level'
     };
 
-    // Here you would typically save to Firestore
-    // Example (you'll need to inject Firestore):
-    // this.firestore.collection('user-answers').add(answerLog);
-
     console.log('Answer log ready for Firebase:', answerLog);
   }
 
-  private openAnimationDialog(isCorrect: boolean, animationUrl: string): void {
+  private openAnimationDialog(isCorrect: boolean): void {
     const dialogRef = this.dialog.open(AnimationDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100vh',
       width: '100vw',
       panelClass: 'fullscreen-dialog',
-      data: {isCorrect, animationUrl}
+      disableClose: true, // Prevent closing by clicking outside
+      data: { isCorrect }
     });
 
     dialogRef.afterClosed().subscribe(() => {
@@ -204,8 +188,8 @@ export class PreIntermediateLevelComponent {
     this.items = this.shuffleArray([...this.dataList[0].itemlist]);
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
-    this.basket = []; // Ensure basket is empty when starting
-    this.totalMarks = 0; // Reset marks when starting new game
+    this.basket = [];
+    this.totalMarks = 0;
 
     console.log('Game started by user:', this.userUid);
   }
@@ -217,7 +201,6 @@ export class PreIntermediateLevelComponent {
       this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
       this.searchItem = this.dataList[this.counter].searchItem;
     } else {
-      // Game completed
       console.log('Game completed!');
       this.logGameCompletion();
       this.reStartGame();
@@ -234,7 +217,6 @@ export class PreIntermediateLevelComponent {
     console.log('Completion Time:', new Date().toISOString());
     console.log('=====================');
 
-    // You can store the final game results here
     const gameResult = {
       userUid: this.userUid,
       totalMarks: this.totalMarks,
@@ -251,7 +233,7 @@ export class PreIntermediateLevelComponent {
   reset() {
     this.isAnswerCorrect = false;
     this.itemFound = false;
-    this.basket = []; // Always ensure basket is empty on reset
+    this.basket = [];
   }
 
   reStartGame() {
@@ -260,7 +242,7 @@ export class PreIntermediateLevelComponent {
     this.isStarted = false;
     this.items = [];
     this.searchItem = '';
-    this.totalMarks = 0; // Reset marks when restarting
+    this.totalMarks = 0;
   }
 
   extractVideoId(event: Event): void {
@@ -279,22 +261,18 @@ export class PreIntermediateLevelComponent {
     return shuffled;
   }
 
-  // Helper method to get the current selected answer (if any)
   get selectedAnswer(): string | null {
     return this.basket.length === 1 ? this.basket[0] : null;
   }
 
-  // Helper method to check if an answer is selected
   get hasSelectedAnswer(): boolean {
     return this.basket.length === 1;
   }
 
-  // Helper method to get current marks (for displaying in template if needed)
   get currentTotalMarks(): number {
     return this.totalMarks;
   }
 
-  // Helper method to get max possible marks
   get maxPossibleMarks(): number {
     return this.dataList.length * this.maxMarksPerQuestion;
   }
