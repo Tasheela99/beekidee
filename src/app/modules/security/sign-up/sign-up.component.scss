@@ -333,6 +333,7 @@ $border-color: #E8F4FD;
 
   &:hover {
     background: rgba(78, 205, 196, 0.1);
+    text-decoration: underline blue 1px;
     transform: translateY(-2px);
   }
 

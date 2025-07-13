@@ -35,10 +35,6 @@ const routes: Routes = [
                     loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
                   },
                   {
-                    path: 'medium',
-                    loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
-                  },
-                  {
                     path: 'intermediate',
                     loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/intermediate-level/intermediate-level.component').then(c => c.IntermediateLevelComponent)
                   },
@@ -58,10 +54,6 @@ const routes: Routes = [
                   {
                     path: 'pre-intermediate',
                     loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
-                  },
-                  {
-                    path: 'medium',
-                    loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
                   },
                   {
                     path: 'intermediate',
