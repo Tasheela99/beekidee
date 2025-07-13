@@ -4,13 +4,13 @@
       <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
         <!-- Header -->
         <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
-          <h1>Find {{ searchItem }}</h1>
+          <h1>{{ searchItem }} ඉලක්කම හොයන්න</h1>
         </div>
 
         <!-- Start Button -->
         <div class="buttons justify-content-center" *ngIf="!isStarted">
           <button class="start-btn" (click)="start()">
-            <span>▶</span> Start Pre Intermediate Level Activities
+            <span>▶</span> සෙල්ලම් කරමු.
           </button>
         </div>
 
@@ -21,7 +21,7 @@
           </div>
           <div class="answer-section" cdkDropListGroup>
             <div class="example-container2">
-              <h2>Answer List</h2>
+              <h2>පිළිතුරු කොටුව</h2>
               <div class="answer-card">
                 <div
                   cdkDropList
@@ -40,7 +40,7 @@
               </div>
             </div>
             <div class="example-container">
-              <h2>Your Answer</h2>
+              <h2>ඔබේ පිළිතුර</h2>
               <div class="answer-card">
                 <div
                   cdkDropList
@@ -57,7 +57,7 @@
                   }
                   <!-- Placeholder for empty basket -->
                   <div *ngIf="basket.length === 0" class="drop-placeholder">
-                    Drop your answer here
+                    ඔබේ පිළිතුර මෙතනට ඇදලා දාන්න.
                   </div>
                 </div>
               </div>
@@ -69,10 +69,10 @@
         <div class="footer" *ngIf="isStarted">
           <div class="d-flex align-items-center justify-content-center p-4 gap-2">
             <button class="reset" (click)="reStartGame()" *ngIf="counter >= dataList.length">
-              <span>⟳</span> Re Start
+              <span>⟳</span> නැවත පටන් ගමු.
             </button>
             <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
-              <span>→</span> Next Question
+              <span>→</span> ඊළඟ ක්‍රියාකාරකම
             </button>
           </div>
         </div>

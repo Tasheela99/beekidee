@@ -13,18 +13,16 @@ import {AnimationDialogComponent} from "../../../../../../../../components/anima
 import {NgClass, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 
-const IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/intermediate1.png?alt=media&token=f3e4f182-9d1f-47a0-824f-3e6731099b92';
-
 @Component({
-  selector: 'app-intermediate-level',
+  selector: 'app-medium-level',
   standalone: true,
   imports: [
     CdkDropList,
     CdkDrag,
     NgIf,
     NgClass,
-    CdkDropListGroup,
-    FormsModule
+    FormsModule,
+    CdkDropListGroup // Added missing import
   ],
   templateUrl: './intermediate-level.component.html',
   styleUrl: './intermediate-level.component.scss'
@@ -38,42 +36,57 @@ export class IntermediateLevelComponent {
   isStarted = false;
   isAnswerCorrect = false;
   errorMessage: string = '';
-  currentQuestion: string = '';
 
   dialog = inject(MatDialog);
 
-  dataList: any[] = [
+  dataList: any = [
     {
-      image: IMAGE_URL,
-      question: 'red A',
-      correctCount: 6
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
+      searchItem: 'A',
+      correctCount: 7 // Count of 'A' in the image
     },
     {
-      image: IMAGE_URL,
-      question: 'blue B',
-      correctCount: 5
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
+      searchItem: 'B',
+      correctCount: 5 // Count of 'B' in the image
     },
     {
-      image: IMAGE_URL,
-      question: 'purple C',
-      correctCount: 4
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
+      searchItem: 'C',
+      correctCount: 4 // Count of 'C' in the image
     },
   ];
 
   drop(event: CdkDragDrop<string[]>) {
+    console.log('Drop event triggered', event);
+    console.log('Previous container data:', event.previousContainer.data);
+    console.log('Current container data:', event.container.data);
+    console.log('Item being moved:', event.previousContainer.data[event.previousIndex]);
+
     if (event.previousContainer === event.container) {
+      // Reordering within the same container
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      // Moving between containers
+      const itemBeingMoved = event.previousContainer.data[event.previousIndex];
+
+      // If dropping into basket, clear it first to ensure only one item
       if (event.container.data === this.basket) {
+        // Return any existing item in basket back to items list
         if (this.basket.length > 0) {
           this.items.push(...this.basket);
-          this.basket = [];
         }
+        this.basket = [];
 
-        const itemToMove = event.previousContainer.data[event.previousIndex];
-        event.previousContainer.data.splice(event.previousIndex, 1);
-        this.basket.push(itemToMove);
+        // Now add the new item to basket
+        transferArrayItem(
+          event.previousContainer.data,
+          this.basket,
+          event.previousIndex,
+          0
+        );
       } else {
+        // Moving from basket back to items
         transferArrayItem(
           event.previousContainer.data,
           event.container.data,
@@ -83,41 +96,34 @@ export class IntermediateLevelComponent {
       }
     }
 
-    setTimeout(() => {
-      this.checkAnswer();
-    }, 0);
+    console.log('Items after drop:', this.items);
+    console.log('Basket after drop:', this.basket);
+
+    this.checkAnswer();
   }
 
   checkAnswer() {
     const correctCount = this.dataList[this.counter].correctCount;
-
-    if (this.basket.length === 1) {
-      const userAnswer = parseInt(this.basket[0], 10); // Added radix parameter
-      if (!isNaN(userAnswer)) { // Added check for valid number
-        this.itemFound = userAnswer === correctCount;
-      } else {
-        this.itemFound = false;
-      }
+    if (this.basket.length === 1 && parseInt(this.basket[0]) === correctCount) {
+      this.itemFound = true;
     } else {
       this.itemFound = false;
     }
-
     this.setAlerts(this.itemFound);
   }
 
   setAlerts(answer: boolean) {
     if (answer) {
+      console.log(`${this.searchItem} with count ${this.basket[0]} is correct.`);
       this.isAnswerCorrect = true;
       this.openAnimationDialog(true, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fhappy-start.webm?alt=media&token=f369ae30-66d3-4642-9c03-8405c18bf203');
       setTimeout(() => {
         this.moveToNext();
       }, 3000);
     } else {
+      console.log(`${this.basket.length > 0 ? this.basket[0] : 'No item'} is incorrect.`);
       this.isAnswerCorrect = false;
-      // Only show incorrect animation if there's actually an answer in the basket
-      if (this.basket.length > 0) {
-        this.openAnimationDialog(false, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fnot-correct.webm?alt=media&token=fc447df6-587a-4429-a56e-9f178fe12073');
-      }
+      this.openAnimationDialog(false, 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fnot-correct.webm?alt=media&token=fc447df6-587a-4429-a56e-9f178fe12073');
     }
   }
 
@@ -137,21 +143,22 @@ export class IntermediateLevelComponent {
   }
 
   start() {
-    this.items = this.shuffleArray(['1', '4', '5', '6']);
-    this.currentQuestion = this.dataList[0].question;
+    this.items = this.shuffleArray(['1', '4', '5', '7']); // Numbers under 10, including 7
+    this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
-    this.basket = [];
-    this.errorMessage = '';
-    this.isAnswerCorrect = false;
+    this.basket = []; // Ensure basket is empty when starting
+    this.errorMessage = ''; // Clear any previous error
   }
 
   moveToNext() {
     if (this.counter + 1 < this.dataList.length) {
       this.counter += 1;
       this.reset();
-      this.items = this.shuffleArray(['1', '4', '5', '6']);
-      this.currentQuestion = this.dataList[this.counter].question;
+      this.items = this.shuffleArray(['1', '4', '5', '7']);
+      this.searchItem = this.dataList[this.counter].searchItem;
     } else {
+      // Game completed
+      console.log('Game completed!');
       this.reStartGame();
     }
   }
@@ -168,12 +175,11 @@ export class IntermediateLevelComponent {
     this.counter = 0;
     this.isStarted = false;
     this.items = [];
-    this.currentQuestion = '';
+    this.searchItem = '';
   }
 
   onImageError(event: Event) {
     this.errorMessage = 'Error loading image. Please check the URL or try again later.';
-    console.error('Image loading error:', event);
   }
 
   private shuffleArray(array: string[]): string[] {
