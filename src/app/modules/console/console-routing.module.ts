@@ -22,58 +22,54 @@ const routes: Routes = [
             loadComponent: () => import('./components/console-dashboard/components/dashboard/dashboard.component').then(c => c.DashboardComponent)
           },
           {
-            path: 'plain-task',
-            loadComponent: () => import('./components/console-dashboard/components/plain-tasks/plain-tasks.component').then(c => c.PlainTasksComponent),
+            path: 'constructivism',
+            loadComponent: () => import('./components/console-dashboard/components/constructivism/constructivism.component').then(c => c.ConstructivismComponent),
             children: [
               {
                 path: '',
-                loadComponent: () => import('./components/console-dashboard/components/plain-tasks/levels/plain-task-level-context/plain-task-level-context.component').then(c => c.PlainTaskLevelContextComponent),
+                loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/constructivism-level-context/constructivism-level-context.component').then(c => c.ConstructivismLevelContextComponent),
                 children: [
                   {path: '', redirectTo: 'pre-intermediate', pathMatch: 'full'},
                   {
                     path: 'pre-intermediate',
-                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
+                    loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
                   },
                   {
                     path: 'medium',
-                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
+                    loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
                   },
                   {
                     path: 'intermediate',
-                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks/levels/intermediate-level/intermediate-level.component').then(c => c.IntermediateLevelComponent)
+                    loadComponent: () => import('./components/console-dashboard/components/constructivism/levels/intermediate-level/intermediate-level.component').then(c => c.IntermediateLevelComponent)
                   },
                 ]
               },
             ]
           },
           {
-            path: 'plain-task-plus-constructivism',
-            loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/plain-tasks-plus-constructivism.component').then(c => c.PlainTasksPlusConstructivismComponent),
+            path: 'constructivism-plus-attention',
+            loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/constructivism-plus-attention.component').then(c => c.ConstructivismPlusAttentionComponent),
             children: [
               {
                 path: '',
-                loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/constructivism-task-context/constructivism-task-context.component').then(c => c.ConstructivismTaskContextComponent),
+                loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/levels/constructivism-plus-attention-level-context/constructivism-plus-attention-level-context.component').then(c => c.ConstructivismPlusAttentionLevelContextComponent),
                 children: [
                   {path: '', redirectTo: 'pre-intermediate', pathMatch: 'full'},
                   {
                     path: 'pre-intermediate',
-                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
+                    loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/levels/pre-intermediate-level/pre-intermediate-level.component').then(c => c.PreIntermediateLevelComponent)
                   },
                   {
                     path: 'medium',
-                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
+                    loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/levels/medium-level/medium-level.component').then(c => c.MediumLevelComponent)
                   },
                   {
                     path: 'intermediate',
-                    loadComponent: () => import('./components/console-dashboard/components/plain-tasks-plus-constructivism/levels/intermediate-level/intermediate-level.component').then(c => c.IntermediateLevelComponent)
+                    loadComponent: () => import('./components/console-dashboard/components/constructivism-plus-attention/levels/intermediate-level/intermediate-level.component').then(c => c.IntermediateLevelComponent)
                   },
                 ]
               },
             ]
-          },
-          {
-            path: 'plain-task-plus-constructivism-plus-attention',
-            loadComponent: () => import('./components/console-dashboard/components/attention-reallocation/attention-reallocation.component').then(c => c.AttentionReallocationComponent)
           },
           {
             path: 'lecture-material',
