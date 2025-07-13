@@ -12,6 +12,8 @@ import {
 import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 import {NgClass, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import {MatButton} from "@angular/material/button";
+import {AttentionService} from "../../../../../../../../services/attention.service";
 
 const IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/intermediate1.png?alt=media&token=f3e4f182-9d1f-47a0-824f-3e6731099b92';
 
@@ -24,7 +26,8 @@ const IMAGE_URL = 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appsp
     NgIf,
     NgClass,
     CdkDropListGroup,
-    FormsModule
+    FormsModule,
+    MatButton
   ],
   templateUrl: './intermediate-level.component.html',
   styleUrl: './intermediate-level.component.scss'
@@ -184,4 +187,6 @@ export class IntermediateLevelComponent {
     }
     return shuffled;
   }
+
+
 }

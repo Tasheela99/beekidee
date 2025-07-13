@@ -12,6 +12,8 @@ import {AnimationDialogComponent} from "../../../../../../../../components/anima
 import {NgClass, NgIf} from "@angular/common";
 import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import {MatButton} from "@angular/material/button";
+import {AttentionService} from "../../../../../../../../services/attention.service";
 
 @Component({
   selector: 'app-pre-intermediate-level',
@@ -22,6 +24,7 @@ import { Observable } from 'rxjs';
     NgIf,
     NgClass,
     CdkDropListGroup,
+    MatButton,
   ],
   templateUrl: './pre-intermediate-level.component.html',
   styleUrl: './pre-intermediate-level.component.scss'
@@ -45,6 +48,8 @@ export class PreIntermediateLevelComponent {
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
+  // private attentionService = inject(AttentionService);
+
 
   constructor() {
     // Get current user observable
@@ -186,6 +191,17 @@ export class PreIntermediateLevelComponent {
       console.log('Animation dialog closed');
     });
   }
+
+
+
+
+  // openAttentionCam() {
+  //   this.attentionService.trackAttention().subscribe((attention) => {
+  //     this.attentionService.getAttentionData().subscribe(attention => {
+  //       console.log(attention);
+  //     })
+  //   })
+  // }
 
   dataList: any = [
     {
