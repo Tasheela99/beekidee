@@ -38,4 +38,8 @@ export class ConsoleDashboardComponent {
       this.router.navigateByUrl('/security/sign-in');
     })
   }
+
+  goToOverview() {
+    this.router.navigate(['/console/admin/dashboard/overview']);
+  }
 }

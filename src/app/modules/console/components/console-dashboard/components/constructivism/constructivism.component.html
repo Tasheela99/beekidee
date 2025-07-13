@@ -1,0 +1,98 @@
+<div class="container-fluid w-100">
+  <div class="row">
+    <div class="col-12 col-lg-12 left">
+      <!-- Camera component -->
+      <!-- <app-draggable-camera *ngIf="showCamera"></app-draggable-camera> -->
+
+      <!-- Lessons Section -->
+      <div class="kindergarten-container">
+        <div class="row">
+          <div class="col-12 my-2">
+            <div class="container">
+              <!-- Lesson Title -->
+              <div class="row mb-4">
+                <div class="col-12 text-center">
+                  <h1 class="kindergarten-title">
+                    🌟 විනෝදජනක ඉගෙනුම් වීඩියෝ 🌟
+                  </h1>
+                  <div class="decorative-line"></div>
+                </div>
+              </div>
+
+              <!-- Carousel Section -->
+              <div class="row">
+                <div class="col-12">
+                  <div class="carousel-wrapper">
+                    <h2 class="section-title">
+                      🎬 ඔබේ ගමන තෝරන්න!
+                    </h2>
+                    <owl-carousel-o [options]="customOptions" class="kindergarten-carousel">
+                      <ng-template carouselSlide *ngFor="let lesson of lessons">
+                        <mat-card
+                          appearance="outlined"
+                          (click)="selectLesson(lesson)"
+                          class="lesson-card"
+                          [class.selected]="selectedLesson?.id === lesson.id">
+                          <div class="card-decoration"></div>
+                          <mat-card-header>
+                            <mat-card-title class="lesson-title">
+                              {{ lesson.title }}
+                            </mat-card-title>
+                          </mat-card-header>
+                          <mat-card-content>
+                            <p class="lesson-description">{{ lesson.description }}</p>
+                          </mat-card-content>
+                        </mat-card>
+                      </ng-template>
+                    </owl-carousel-o>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Video Player Section -->
+              <div class="my-2 row">
+                <div class="col-12 d-flex align-items-center justify-content-center video-section">
+                  <mat-card
+                    class="video-card w-100"
+                    appearance="outlined"
+                    *ngIf="selectedLesson">
+                    <div class="video-card-decoration"></div>
+                    <mat-card-content class="video-content">
+                      <p class="video-subtitle">{{ selectedLesson.subtitle }}</p>
+                      <div class="video-wrapper">
+                        <video
+                          width="100%"
+                          height="auto"
+                          controls
+                          [src]="selectedLesson.lessonUrl"
+                          class="kindergarten-video"
+                        >
+                          ඔබේ බ්‍රව්සරය මෙම වීඩියෝව ප්‍රදර්ශනය නොකරයි.
+                        </video>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
+                  <!-- Placeholder when no video is selected -->
+                  <div class="no-video-placeholder w-100" *ngIf="!selectedLesson">
+                    <div class="placeholder-content">
+                      <div class="placeholder-icon">🎬</div>
+                      <h3>නරඹන්න සවිස්තර වීඩියෝවක් තෝරන්න</h3>
+                      <p>ඉහත පාඩමක ක්ලික් කිරීමෙන් ඔබගේ ඉගෙනීම ආරම්භ කරන්න</p>
+                      <div class="bouncing-arrow">👆</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Router Outlet for Additional Content -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
