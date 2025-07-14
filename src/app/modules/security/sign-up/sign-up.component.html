@@ -1,95 +1,96 @@
-<div class="m-0 p-0 container-fluid full-page">
-  <div class="row h-100 m-0 g-0">
-    <!-- Left Column - Sign Up Form -->
-    <div class="col-12 col-md-6 p-0 d-flex align-items-center justify-content-center bee-left-form">
-      <mat-card class="login-card">
-        <mat-card-header class="mb-4 text-center">
-          <mat-card-title class="header-text">Join Our Fun!</mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="text-center">
-          <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-            <div class="row">
-              <div class="col-12 text-center">
-                <mat-form-field appearance="outline" class="example-full-width">
-                  <mat-label>Display Name</mat-label>
-                  <input matInput formControlName="displayName">
-                  <mat-icon matSuffix class="icon">man</mat-icon>
-                  <mat-error *ngIf="signupForm.get('displayName')?.hasError('required')">
-                    We need to know your name!
-                  </mat-error>
-                </mat-form-field>
-              </div>
+<div class="signup-container">
+  <div class="floating-elements">
+    <div class="cloud cloud-1">☁️</div>
+    <div class="cloud cloud-2">☁️</div>
+    <div class="cloud cloud-3">☁️</div>
+    <div class="star star-1">⭐</div>
+    <div class="star star-2">⭐</div>
+    <div class="star star-3">⭐</div>
+    <div class="balloon balloon-1">🎈</div>
+    <div class="balloon balloon-2">🎈</div>
+  </div>
 
-              <div class="col-12 text-center">
-                <mat-form-field appearance="outline" class="example-full-width">
-                  <mat-label>Your Email</mat-label>
-                  <input matInput formControlName="email">
-                  <mat-icon matSuffix class="icon">email</mat-icon>
-                  <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
-                    We need your email!
-                  </mat-error>
-                  <mat-error *ngIf="signupForm.get('email')?.hasError('email')">
-                    That doesn't look like an email
-                  </mat-error>
-                </mat-form-field>
-              </div>
-
-               <div class="col-12 text-center">
-                <mat-form-field appearance="outline" class="example-full-width">
-                  <mat-label>Your phoneNumber</mat-label>
-                  <input matInput type="number" formControlName="phoneNumber">
-                  <mat-icon matSuffix class="icon">phone</mat-icon>
-                  <mat-error *ngIf="signupForm.get('phoneNumber')?.hasError('required')">
-                    We need your phoneNumber!
-                  </mat-error>
-                  <mat-error *ngIf="signupForm.get('phoneNumber')?.hasError('min')">
-                    You must enter 10 numbers.
-                  </mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="col-12 text-center">
-                <mat-form-field appearance="outline" class="example-full-width">
-                  <mat-label>Secret Password</mat-label>
-                  <input matInput
-                         formControlName="password"
-                         [type]="hidePassword ? 'password' : 'text'">
-                  <button mat-icon-button matSuffix
-                          (click)="hidePassword = !hidePassword"
-                          [attr.aria-label]="'Hide password'"
-                          [attr.aria-pressed]="hidePassword"
-                          class="icon-button">
-                    <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
-                  </button>
-                  <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
-                    Don't forget your secret word!
-                  </mat-error>
-                  <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">
-                    Make it longer (at least 6 letters)
-                  </mat-error>
-                </mat-form-field>
-              </div>
-
-              <div class="col-12 text-center">
-                <button mat-raised-button class="example-full-width login-btn" type="submit" [disabled]="signupForm.invalid">
-                  Let's Play!
-                </button>
-              </div>
-            </div>
-          </form>
-
-          <div class="col-12 my-2 text-center">
-            <button mat-raised-button class="example-full-width register-btn" routerLink="/security/sign-in">
-              Already a Friend? Sign In!
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
+  <div class="signup-card">
+    <div class="header">
+      <div class="mascot">
+        <div class="mascot-animal">{{ animals[currentAnimal] }}</div>
+      </div>
+      <h1 class="title">
+        <span class="letter" style="animation-delay: 0.1s">W</span>
+        <span class="letter" style="animation-delay: 0.2s">e</span>
+        <span class="letter" style="animation-delay: 0.3s">l</span>
+        <span class="letter" style="animation-delay: 0.4s">c</span>
+        <span class="letter" style="animation-delay: 0.5s">o</span>
+        <span class="letter" style="animation-delay: 0.6s">m</span>
+        <span class="letter" style="animation-delay: 0.7s">e</span>
+        <span class="letter" style="animation-delay: 0.8s">!</span>
+      </h1>
     </div>
 
-    <!-- Right Column - Branding Image -->
-    <div class="col-12 col-md-6 p-0 d-none d-md-flex branding-column align-items-center justify-content-center">
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+      <div class="form-group">
+        <label for="displayName" class="form-label">What's your name?</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🧒</span>
+          <input type="text" id="displayName" formControlName="displayName" class="form-input"
+            [class.error]="getFieldError('displayName')" placeholder="Enter your awesome name!" />
+        </div>
+        <div class="error-message" *ngIf="getFieldError('displayName')">
+          {{ getFieldError('displayName') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email" class="form-label">Parent's email address</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📧</span>
+          <input type="email" id="email" formControlName="email" class="form-input" [class.error]="getFieldError('email')"
+            placeholder="parent@example.com" />
+        </div>
+        <div class="error-message" *ngIf="getFieldError('email')">
+          {{ getFieldError('email') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phoneNumber" class="form-label">Parent's phone number</label>
+        <div class="input-wrapper">
+          <span class="input-icon">📱</span>
+          <input type="tel" id="phoneNumber" formControlName="phoneNumber" class="form-input"
+            [class.error]="getFieldError('phoneNumber')" placeholder="1234567890" />
+        </div>
+        <div class="error-message" *ngIf="getFieldError('phoneNumber')">
+          {{ getFieldError('phoneNumber') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password" class="form-label">Create a secret password</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔐</span>
+          <input [type]="hidePassword ? 'password' : 'text'" id="password" formControlName="password" class="form-input"
+            [class.error]="getFieldError('password')" placeholder="Make it super secret!" />
+          <button type="button" class="password-toggle" (click)="hidePassword = !hidePassword">
+            {{ hidePassword ? '🙈' : '👁️' }}
+          </button>
+        </div>
+        <div class="error-message" *ngIf="getFieldError('password')">
+          {{ getFieldError('password') }}
+        </div>
+      </div>
+
+      <button type="submit" class="signup-button" [disabled]="signupForm.invalid">
+        <span class="button-text">🚀 Let's Play!</span>
+      </button>
+    </form>
+
+    <div class="signin-link">
+      <p>Already have an account?
+        <a href="#" class="signin-button" routerLink="/security/sign-in">
+          <span class="icon">🎪</span>
+          Sign In Here!
+        </a>
+      </p>
     </div>
   </div>
 </div>
-

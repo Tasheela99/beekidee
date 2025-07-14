@@ -10,11 +10,20 @@
 <mat-drawer-container class="example-container" autosize>
   <mat-drawer #drawer class="example-sidenav" mode="over">
     <mat-list>
-      <mat-list-item><button mat-button routerLink="/console/admin/dashboard/overview">Overview</button></mat-list-item>
-      <mat-list-item><button mat-button routerLink="/console/admin/dashboard/plain-task">Plain Task</button></mat-list-item>
-      <mat-list-item><button mat-button routerLink="/console/admin/dashboard/plain-task-plus-constructivism">Plain + Constructivism</button></mat-list-item>
-      <mat-list-item><button mat-button routerLink="/console/admin/dashboard/plain-task-plus-constructivism-plus-attention">Plain + Constructivism + Attention</button></mat-list-item>
+      <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/overview" (click)="goToOverview()">Overview</button>
+      </mat-list-item>
+      <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/constructivism">Constructivism</button>
+      </mat-list-item>
+      <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/constructivism-plus-attention">Constructivism + Attention Monitoring</button>
+      </mat-list-item>
+      <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+        <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/lecture-material">Lecture Materials</button>
+      </mat-list-item>
     </mat-list>
+
   </mat-drawer>
 
   <div class="example-sidenav-content">

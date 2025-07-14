@@ -8,6 +8,7 @@ import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatIcon} from "@angular/material/icon";
 import {ConsoleService} from "../../../../services/console.service";
 import {NgIf} from "@angular/common";
+import {MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-lecture-material-pop-up',
@@ -20,6 +21,8 @@ import {NgIf} from "@angular/common";
 export class LectureMaterialPopUpComponent {
 
   private consoleService = inject(ConsoleService);
+  private dialogRef = inject(MatDialogRef<LectureMaterialPopUpComponent>);
+
 
   // Add validators to ensure form fields are required
   form = new FormGroup({
@@ -42,22 +45,16 @@ export class LectureMaterialPopUpComponent {
   }
 
   submit() {
-    // Add form validation check
     if (this.form.invalid) {
       console.error('Form is invalid');
-      // Mark all fields as touched to show validation errors
       this.form.markAllAsTouched();
       return;
     }
-
     if (!this.selectedFile) {
       console.error('No file selected');
       return;
     }
-
-    // Get form values properly
     const formValues = this.form.value;
-
     this.consoleService.saveLesson({
       file: this.selectedFile,
       subject: formValues.subject || '',
@@ -67,12 +64,13 @@ export class LectureMaterialPopUpComponent {
       level: formValues.level || '',
     }).then(() => {
       console.log("Saved successfully");
-      // Reset form and file selection after successful save
       this.form.reset();
       this.selectedFile = null;
       this.fileName = '';
+      this.dialogRef.close(true);
     }).catch(err => {
       console.error("Save failed", err);
     });
   }
+
 }

@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {Firestore, doc, setDoc, deleteDoc, getDocs, getDoc, collection} from '@angular/fire/firestore';
+import {Firestore, doc, setDoc, deleteDoc, getDocs, getDoc, collection, query, where} from '@angular/fire/firestore';
 import {ref, Storage, uploadBytes, getDownloadURL, deleteObject} from '@angular/fire/storage';
 import {v4 as uuidv4} from 'uuid';
 import {MatSnackBar} from '@angular/material/snack-bar';
@@ -117,7 +117,6 @@ export class ConsoleService {
       const querySnapshot = await getDocs(lessonsRef);
       return querySnapshot.docs.map(doc => ({lessonId: doc.id, ...doc.data()}));
     } catch (error) {
-      this.snackBar.open('Failed to fetch lessons', 'Close', {duration: 3000, panelClass: ['snackbar-error']});
       throw new Error('Failed to fetch lessons');
     }
   }
@@ -136,4 +135,65 @@ export class ConsoleService {
       throw new Error('Failed to fetch lesson');
     }
   }
+
+  public async getLessonsByType(type: string): Promise<Lesson[]> {
+    try {
+      const lessonsRef = collection(this.firestore, 'lessons');
+      const q = query(lessonsRef, where('type', '==', type));
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map(doc => doc.data() as Lesson);
+    } catch (error) {
+      console.error('Error fetching lessons by type:', error);
+      return [];
+    }
+  }
+
+  public async getLessonsByLevel(level: string): Promise<Lesson[]> {
+    try {
+      const lessonsRef = collection(this.firestore, 'lessons');
+      const q = query(lessonsRef, where('level', '==', level));
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map(doc => doc.data() as Lesson);
+    } catch (error) {
+      console.error('Error fetching lessons by level:', error);
+      return [];
+    }
+  }
+
+  public async getLessonsByLevelAndType(level: string, type: string): Promise<Lesson[]> {
+    try {
+      const lessonsRef = collection(this.firestore, 'lessons');
+      const q = query(lessonsRef, where('level', '==', level), where('type', '==', type));
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map(doc => doc.data() as Lesson);
+    } catch (error) {
+      console.error('Error fetching lessons by level and type:', error);
+      return [];
+    }
+  }
+
+  public async getLessonsByLevelTypeAndSubject(level: string, type: string, subject: string): Promise<Lesson[]> {
+    try {
+      const lessonsRef = collection(this.firestore, 'lessons');
+      const q = query(
+        lessonsRef,
+        where('level', '==', level),
+        where('type', '==', type),
+        where('subject', '==', subject)
+      );
+      const querySnapshot = await getDocs(q);
+
+      return querySnapshot.docs.map(doc => doc.data() as Lesson);
+    } catch (error) {
+      console.error('Error fetching lessons by level, type, and subject:', error);
+      return [];
+    }
+  }
+
+
+
+
 }
