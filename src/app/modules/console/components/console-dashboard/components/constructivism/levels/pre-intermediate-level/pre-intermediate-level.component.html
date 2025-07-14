@@ -1,7 +1,7 @@
 <div class="container-fluid m-0 p-0">
   <div class="row">
     <div class="col-12 m-0 p-0">
-      <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
+      <div class="outer">
         <!-- Header -->
         <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
           <h1>{{ searchItem }} ඉලක්කම හොයන්න</h1>
@@ -16,48 +16,56 @@
 
         <!-- Game Content -->
         <div class="content-row" *ngIf="isStarted && counter < dataList.length">
-          <div class="image-container">
-            <img [src]="dataList[counter].image" alt="Tree Image" class="tree-image">
-          </div>
-          <div class="answer-section" cdkDropListGroup>
-            <div class="example-container2">
-              <h2>පිළිතුරු කොටුව</h2>
-              <div class="answer-card">
-                <div
-                  cdkDropList
-                  #itemsList="cdkDropList"
-                  id="items-list"
-                  [cdkDropListData]="items"
-                  [cdkDropListConnectedTo]="[basketList]"
-                  class="example-list2"
-                  (cdkDropListDropped)="drop($event)">
-                  @for (item of items; track item) {
-                    <div class="example-box2" cdkDrag>
-                      {{ item }}
-                    </div>
-                  }
-                </div>
+          <div class="row">
+            <div class="col-12 col-md-6">
+              <div class="image-container">
+                @for (index of getTreeArray(); track index) {
+                  <img [src]="dataList[counter].image" alt="Tree Image" class="tree-image">
+                }
               </div>
             </div>
-            <div class="example-container">
-              <h2>ඔබේ පිළිතුර</h2>
-              <div class="answer-card">
-                <div
-                  cdkDropList
-                  #basketList="cdkDropList"
-                  id="basket-list"
-                  [cdkDropListData]="basket"
-                  [cdkDropListConnectedTo]="[itemsList]"
-                  class="example-list"
-                  (cdkDropListDropped)="drop($event)">
-                  @for (item of basket; track item) {
-                    <div class="example-box" cdkDrag>
-                      {{ item }}
+            <div class="col-12 col-md-6">
+              <div class="answer-section" cdkDropListGroup>
+                <div class="example-container2">
+                  <h2>පිළිතුරු කොටුව</h2>
+                  <div class="answer-card">
+                    <div
+                      cdkDropList
+                      #itemsList="cdkDropList"
+                      id="items-list"
+                      [cdkDropListData]="items"
+                      [cdkDropListConnectedTo]="[basketList]"
+                      class="example-list2"
+                      (cdkDropListDropped)="drop($event)">
+                      @for (item of items; track item) {
+                        <div class="example-box2" cdkDrag>
+                          {{ item }}
+                        </div>
+                      }
                     </div>
-                  }
-                  <!-- Placeholder for empty basket -->
-                  <div *ngIf="basket.length === 0" class="drop-placeholder">
-                    ඔබේ පිළිතුර මෙතනට ඇදලා දාන්න.
+                  </div>
+                </div>
+                <div class="example-container">
+                  <h2>ඔබේ පිළිතුර</h2>
+                  <div class="answer-card">
+                    <div
+                      cdkDropList
+                      #basketList="cdkDropList"
+                      id="basket-list"
+                      [cdkDropListData]="basket"
+                      [cdkDropListConnectedTo]="[itemsList]"
+                      class="example-list"
+                      (cdkDropListDropped)="drop($event)">
+                      @for (item of basket; track item) {
+                        <div class="example-box" cdkDrag>
+                          {{ item }}
+                        </div>
+                      }
+                      <!-- Placeholder for empty basket -->
+                      <div *ngIf="basket.length === 0" class="drop-placeholder">
+                        ඔබේ පිළිතුර මෙතනට ඇදලා දාන්න.
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
