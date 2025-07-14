@@ -8,7 +8,7 @@ import {
   moveItemInArray,
   transferArrayItem
 } from "@angular/cdk/drag-drop";
-import {NgClass, NgIf} from "@angular/common";
+import {NgClass, NgIf, CommonModule} from "@angular/common";
 import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
@@ -22,6 +22,7 @@ import {AnimationDialogComponent} from "../../../../../../../../components/anima
     NgIf,
     NgClass,
     CdkDropListGroup,
+    CommonModule
   ],
   templateUrl: './pre-intermediate-level.component.html',
   styleUrl: './pre-intermediate-level.component.scss'
@@ -117,9 +118,8 @@ export class PreIntermediateLevelComponent {
       this.awardMarks();
       setTimeout(() => {
         this.moveToNext();
-      }, 3500); // Increased timeout to allow animation to complete
+      }, 3500);
     } else {
-      // For wrong answers, you might want to reset after showing animation
       setTimeout(() => {
         this.reset();
       }, 3500);
@@ -162,7 +162,7 @@ export class PreIntermediateLevelComponent {
       height: '100vh',
       width: '100vw',
       panelClass: 'fullscreen-dialog',
-      disableClose: true, // Prevent closing by clicking outside
+      disableClose: true,
       data: { isCorrect }
     });
 
@@ -173,14 +173,14 @@ export class PreIntermediateLevelComponent {
 
   dataList: any = [
     {
-      itemlist: ['5', '1', '3'],
+      itemlist: ['3', '2', '4'],
       searchItem: '3',
-      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree.jpg?alt=media&token=d9538c92-a157-447d-9f9d-fb1881b1159d'
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
     },
     {
-      itemlist: ['4', '5', '2'],
+      itemlist: ['5', '2', '4'],
       searchItem: '4',
-      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/tree(4).png?alt=media&token=4c8faa42-c5c5-43b3-ae4f-bbc747029585'
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
     },
   ];
 
@@ -275,5 +275,13 @@ export class PreIntermediateLevelComponent {
 
   get maxPossibleMarks(): number {
     return this.dataList.length * this.maxMarksPerQuestion;
+  }
+
+  getTreeCount(): number {
+    return this.counter === 0 ? 3 : 4;
+  }
+
+  getTreeArray(): number[] {
+    return Array(this.getTreeCount()).fill(0).map((_, index) => index);
   }
 }
