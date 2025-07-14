@@ -14,10 +14,10 @@
         <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/overview" (click)="goToOverview()">Overview</button>
       </mat-list-item>
       <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
-        <button class="w-100 d-flex align-items-center justify-content-start" mat-button (click)="openPopup('/console/admin/dashboard/constructivism')">Constructivism</button>
+        <button class="w-100 d-flex align-items-center justify-content-start" mat-button (click)="openPopup('0ms','0ms')">Constructivism</button>
       </mat-list-item>
       <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
-        <button class="w-100 d-flex align-items-center justify-content-start" mat-button (click)="openPopup('/console/admin/dashboard/constructivism-plus-attention')">Constructivism + Attention Monitoring</button>
+        <button class="w-100 d-flex align-items-center justify-content-start" mat-button (click)="openPopup('0ms','0ms')">Constructivism + Attention Monitoring</button>
       </mat-list-item>
       <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/lecture-material">Lecture Materials</button>
@@ -28,7 +28,7 @@
   <div class="example-sidenav-content">
     <div class="container-fluid">
       <router-outlet></router-outlet>
-      <app-student-name-popup [isVisible]="showPopup" (onSubmit)="onNameSubmit($event)" (onCancel)="onNameCancel()"></app-student-name-popup>
+<!--      <app-student-name-popup [isVisible]="showPopup"></app-student-name-popup>-->
     </div>
   </div>
 </mat-drawer-container>

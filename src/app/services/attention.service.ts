@@ -12,10 +12,10 @@ export class AttentionService {
 
   trackAttention(studentId: any, sessionId: any) {
     const data = {
-      studentId: studentId,
-      sessionId: sessionId
+      student_id: studentId,
+      session_id: sessionId
     };
-    return this.http.post(this.apiUrl + '/start_tracking', data);
+    return this.http.post(this.apiUrl + 'start_tracking', data);
   }
 
 
