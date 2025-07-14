@@ -11,26 +11,29 @@ import { CommonModule } from '@angular/common';
 })
 export class StudentNamePopupComponent {
   @Input() isVisible: boolean = false;
-  @Output() onSubmit = new EventEmitter<string>();
+  @Output() onSubmit = new EventEmitter<{ name: string, round: number }>();
   @Output() onCancel = new EventEmitter<void>();
 
   studentName: string = '';
+  roundNumber: number | null = null;
 
-  submitName(): void {
-    if (this.studentName.trim()) {
-      this.onSubmit.emit(this.studentName.trim());
+  submitDetails(): void {
+    if (this.studentName.trim() && this.roundNumber !== null && this.roundNumber > 0) {
+      this.onSubmit.emit({ name: this.studentName.trim(), round: this.roundNumber });
       this.studentName = '';
+      this.roundNumber = null;
     }
   }
 
   cancel(): void {
     this.studentName = '';
+    this.roundNumber = null;
     this.onCancel.emit();
   }
 
   onKeyPress(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
-      this.submitName();
+      this.submitDetails();
     }
   }
 }
