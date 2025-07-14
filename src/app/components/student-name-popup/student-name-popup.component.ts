@@ -1,36 +1,47 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import {AttentionService} from "../../services/attention.service";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-student-name-popup',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './student-name-popup.component.html',
   styleUrls: ['./student-name-popup.component.scss']
 })
 export class StudentNamePopupComponent {
   @Input() isVisible: boolean = false;
-  @Output() onSubmit = new EventEmitter<string>();
+  @Output() onSubmit = new EventEmitter<{ name: string, round: number }>();
   @Output() onCancel = new EventEmitter<void>();
 
-  studentName: string = '';
+  readonly dialogRef = inject(MatDialogRef<StudentNamePopupComponent>);
+  data = inject(MAT_DIALOG_DATA);
 
-  submitName(): void {
-    if (this.studentName.trim()) {
-      this.onSubmit.emit(this.studentName.trim());
-      this.studentName = '';
-    }
+  private attentionService = inject(AttentionService);
+
+  popupForm = new FormGroup({
+    studentName:new FormControl(),
+    roundNumber:new FormControl(),
+  })
+
+  submitDetails(): void {
+    this.attentionService.trackAttention(
+      this.popupForm.get('studentName')?.value,
+      this.popupForm.get('roundNumber')?.value,
+    ).subscribe(response => {
+      console.log(response);
+    })
   }
 
   cancel(): void {
-    this.studentName = '';
-    this.onCancel.emit();
+   this.dialogRef.close();
   }
 
   onKeyPress(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
-      this.submitName();
+      this.submitDetails();
     }
   }
 }
