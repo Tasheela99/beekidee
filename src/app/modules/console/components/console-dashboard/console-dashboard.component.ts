@@ -7,6 +7,7 @@ import {Router, RouterLink, RouterLinkActive, RouterOutlet} from "@angular/route
 import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
 import {MatList, MatListItem} from "@angular/material/list";
 import {NgOptimizedImage} from "@angular/common";
+import {StudentNamePopupComponent} from "../../../../components/student-name-popup/student-name-popup.component";
 
 @Component({
   selector: 'app-console-dashboard',
@@ -23,15 +24,18 @@ import {NgOptimizedImage} from "@angular/common";
     RouterOutlet,
     RouterLink,
     NgOptimizedImage,
-    RouterLinkActive
+    RouterLinkActive,
+    StudentNamePopupComponent
   ],
   templateUrl: './console-dashboard.component.html',
   styleUrl: './console-dashboard.component.scss'
 })
 export class ConsoleDashboardComponent {
-
   private auth = inject(AuthService);
   private router = inject(Router);
+
+  showPopup: boolean = false;
+  targetRoute: string = '';
 
   logout() {
     this.auth.signOut().then(()=>{
@@ -41,5 +45,20 @@ export class ConsoleDashboardComponent {
 
   goToOverview() {
     this.router.navigate(['/console/admin/dashboard/overview']);
+  }
+
+  openPopup(route: string) {
+    this.targetRoute = route;
+    this.showPopup = true;
+  }
+
+  onNameSubmit(name: string) {
+    console.log('Name submitted:', name);
+    this.router.navigate([this.targetRoute]);
+    this.showPopup = false;
+  }
+
+  onNameCancel() {
+    this.showPopup = false;
   }
 }
