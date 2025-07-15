@@ -3,7 +3,7 @@
     <div class="col-12 m-0 p-0">
       <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}" [class.started]="isStarted">
 
-        <!-- ✅ Background Lines -->
+        <!-- Background Lines -->
         <div class="lines">
           <div class="line"></div>
           <div class="line"></div>
@@ -89,12 +89,20 @@
             <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
               <span>→</span> ඊළඟ ක්‍රියාකාරකම
             </button>
+            <button class="finish" (click)="finishGame()">
+              <span>🏁</span> ක්‍රීඩාව අවසන් කරන්න
+            </button>
           </div>
         </div>
 
         <!-- Error Message -->
         <div *ngIf="errorMessage" class="error-message alert alert-danger">
           {{ errorMessage }}
+        </div>
+
+        <!-- Marks Display -->
+        <div class="marks-display" *ngIf="isStarted">
+          <p>Current Marks: {{ currentTotalMarks }} / {{ maxPossibleMarks }}</p>
         </div>
 
       </div>
