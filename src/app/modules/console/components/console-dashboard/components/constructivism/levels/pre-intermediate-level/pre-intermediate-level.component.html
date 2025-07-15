@@ -1,4 +1,4 @@
-<div class="outer">
+<div class="outer" [class.started]="isStarted">
   <!-- 🔁 Animated Background Lines (inserted here) -->
   <div class="lines">
     <div class="line"></div>
@@ -87,7 +87,7 @@
   <!-- Footer Buttons -->
   <div class="footer" *ngIf="isStarted">
     <div class="d-flex align-items-center justify-content-center p-4 gap-2">
-      <button class="reset" (click)="reStartGame()" *ngIf="counter >= dataList.length">
+      <button class="reset" (click)="reStartGame()">
         <span>⟳</span> නැවත පටන් ගමු.
       </button>
       <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">

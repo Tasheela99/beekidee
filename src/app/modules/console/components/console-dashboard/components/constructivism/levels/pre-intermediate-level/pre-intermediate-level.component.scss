@@ -19,6 +19,11 @@
   }
 }
 
+.outer.started {
+  background: white;
+  overflow: visible; /* Remove animation overflow */
+}
+
 .outer .lines {
   position: absolute;
   top: 0;
@@ -30,6 +35,10 @@
   display: flex;
   justify-content: space-between;
   z-index: 0; /* Behind content */
+}
+
+.outer.started .lines {
+  display: none; /* Hide lines animation when started */
 }
 
 .outer .line {
@@ -253,23 +262,21 @@
 }
 
 .reset {
-  background: linear-gradient(135deg, #FF6B6B, #FF8A80);
+  background-color: #f44336;
   color: white;
 }
 
 .reset:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+    background-color: #da190b;
 }
 
 .next {
-  background: linear-gradient(135deg, #81C784, #4CAF50);
+  background-color: #8BC34A;
   color: white;
 }
 
 .next:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 10px 30px rgba(129, 199, 132, 0.4);
+  background-color: #7cb342;
 }
 
 .footer {

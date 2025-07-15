@@ -1,7 +1,7 @@
 <div class="container-fluid m-0 p-0">
   <div class="row">
     <div class="col-12 m-0 p-0">
-      <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
+      <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}" [class.started]="isStarted">
 
         <!-- ✅ Background Lines -->
         <div class="lines">
