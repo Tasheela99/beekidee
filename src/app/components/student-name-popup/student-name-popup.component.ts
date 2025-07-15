@@ -1,9 +1,10 @@
-import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
-import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {CommonModule} from '@angular/common';
-import {AttentionService} from "../../services/attention.service";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material/dialog";
-import {AttentionLostPopupComponent} from "../attention-lost-popup/attention-lost-popup.component";
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AttentionService } from "../../services/attention.service";
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
+import { AttentionLostPopupComponent } from "../attention-lost-popup/attention-lost-popup.component";
+import { Router } from '@angular/router';
 
 interface AttentionData {
   student_id: string;
@@ -12,7 +13,6 @@ interface AttentionData {
     overall_attention: number;
   }[];
 }
-
 
 @Component({
   selector: 'app-student-name-popup',
@@ -31,22 +31,19 @@ export class StudentNamePopupComponent {
   data = inject(MAT_DIALOG_DATA);
 
   private attentionService = inject(AttentionService);
+  private router = inject(Router);  // Inject Router service
 
   popupForm = new FormGroup({
     studentName: new FormControl(),
     roundNumber: new FormControl(),
-  })
-  private dialog = inject(MatDialog)
-
-
+  });
+  private dialog = inject(MatDialog);
 
   submitDetails(): void {
     this.attentionService.trackAttention(
       this.popupForm.get('studentName')?.value,
       this.popupForm.get('roundNumber')?.value,
     ).subscribe(response => {
-      console.log(response);
-
       const studentName = this.popupForm.get('studentName')?.value;
       let intervalIndex = 0;
 
@@ -58,14 +55,17 @@ export class StudentNamePopupComponent {
             const currentOverallAttention = overallData[intervalIndex];
             console.log(`Overall Attention: ${currentOverallAttention}`);
 
-            if (currentOverallAttention < 55 && !this.isDialogOpen) {
-              console.log("You lost your attention");
-              this.openDialog();  // Open the dialog
-            }
+            // Check if we are on the specific route
+            if (this.router.url === '/console/admin/dashboard/constructivism-plus-attention/pre-intermediate') {
+              if (currentOverallAttention < 70 && !this.isDialogOpen) {
+                console.log("You lost your attention");
+                this.openDialog();  // Open the dialog if route matches
+              }
 
-            if (currentOverallAttention >= 55 && this.isDialogOpen) {
-              console.log("Your attention is back");
-              this.closeDialog();  // Close the dialog
+              if (currentOverallAttention >= 70 && this.isDialogOpen) {
+                console.log("Your attention is back");
+                this.closeDialog();  // Close the dialog if route matches
+              }
             }
 
             intervalIndex++;
@@ -79,6 +79,7 @@ export class StudentNamePopupComponent {
           }
         });
       }, 10000);
+      this.dialogRef.close();
     });
   }
 
@@ -93,8 +94,6 @@ export class StudentNamePopupComponent {
     this.dialog.closeAll();  // Close all open dialogs
     this.isDialogOpen = false;
   }
-
-
 
   cancel(): void {
     this.dialogRef.close();
