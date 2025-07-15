@@ -14,8 +14,9 @@
   </div>
 
   <!-- Header -->
-  <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
-    <h1>{{ searchItem }} ඉලක්කම හොයන්න</h1>
+  <div class="header justify-content-center" *ngIf="isStarted">
+    <h1 *ngIf="counter < dataList.length">{{ searchItem }} ඉලක්කම හොයන්න</h1>
+    <h1 *ngIf="counter >= dataList.length">සියලු ප්‍රශ්න අවසන්! සෙල්ලම අවසන් කරන්න.</h1>
   </div>
 
   <!-- Start Button -->
@@ -87,12 +88,16 @@
   <!-- Footer Buttons -->
   <div class="footer" *ngIf="isStarted">
     <div class="d-flex align-items-center justify-content-center p-4 gap-2">
-      <button class="reset" (click)="reStartGame()">
-        <span>⟳</span> නැවත පටන් ගමු.
-      </button>
       <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
         <span>→</span> ඊළඟ ක්‍රියාකාරකම
       </button>
+      <button class="reset" (click)="reStartGame()">
+        <span>⟳</span> නැවත පටන් ගමු.
+      </button>
+      <!-- NEW: Finish Game Button -->
+      <button class="finish" (click)="finishGame()">
+              <span>🏁</span> ක්‍රීඩාව අවසන් කරන්න
+            </button>
     </div>
   </div>
 </div>
