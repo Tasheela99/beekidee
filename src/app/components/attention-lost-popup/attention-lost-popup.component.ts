@@ -23,7 +23,7 @@ export class AttentionLostPopupComponent implements OnInit {
     'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/attention-focus%2FIMG_6940.MOV?alt=media&token=0ec0d19e-2b23-46e4-af35-92417e58488e'
   ];
 
-  selectedVideo!: any;
+  selectedVideo!: string;
 
   ngOnInit() {
     this.shuffleAndSelectVideo();
@@ -33,5 +33,4 @@ export class AttentionLostPopupComponent implements OnInit {
     const randomIndex = Math.floor(Math.random() * this.videoUrls.length);
     this.selectedVideo = this.videoUrls[randomIndex];
   }
-
 }
