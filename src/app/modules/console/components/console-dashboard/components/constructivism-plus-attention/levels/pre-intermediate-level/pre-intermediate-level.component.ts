@@ -190,6 +190,10 @@ export class PreIntermediateLevelComponent {
     this.isStarted = true;
     this.basket = [];
     this.totalMarks = 0;
+    const outerDiv = document.querySelector('.outer');
+    if (outerDiv) {
+      outerDiv.classList.add('started');
+    }
 
     console.log('Game started by user:', this.userUid);
   }
@@ -243,6 +247,10 @@ export class PreIntermediateLevelComponent {
     this.items = [];
     this.searchItem = '';
     this.totalMarks = 0;
+    const outerDiv = document.querySelector('.outer');
+    if (outerDiv) {
+      outerDiv.classList.remove('started');
+    }
   }
 
   extractVideoId(event: Event): void {
