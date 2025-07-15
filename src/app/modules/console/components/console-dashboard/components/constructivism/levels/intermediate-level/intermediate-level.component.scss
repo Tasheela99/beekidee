@@ -246,7 +246,7 @@
   margin: 20px 0;
 }
 
-.start-btn, .reset, .next {
+.start-btn, .reset, .next, .finish {
   padding: 18px 35px;
   border: none;
   border-radius: 25px;
@@ -287,21 +287,30 @@
 }
 
 .reset {
-  background-color: #f44336;
+  background: #0560aa;
   color: white;
 }
 
 .reset:hover {
-  background-color: #da190b;
+  background: #02355f;
 }
 
 .next {
-  background-color: #8BC34A;
+  background: linear-gradient(to top, #00154c, #12376e, #23487f);
   color: white;
 }
 
 .next:hover {
-  background-color: #7cb342;
+  background: linear-gradient(to top, #000a22, #072655, #0e2b57);
+}
+
+.finish {
+  background: #da2f23;
+  color: white;
+}
+
+.finish:hover {
+  background: #da190b;
 }
 
 .answer-is-true {
