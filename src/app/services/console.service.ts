@@ -194,6 +194,23 @@ export class ConsoleService {
   }
 
 
+  public async logGameCompletion(gameResult: any): Promise<void> {
+    if (!gameResult.userUid) {
+      console.error('User UID is missing');
+      return;
+    }
+    try {
+      const gameCompletionRef = doc(collection(this.firestore, 'gameResults', gameResult.userUid, 'completedGames'));
+      await setDoc(gameCompletionRef, gameResult);
+      console.log('Game result saved successfully');
+    } catch (error) {
+      console.error('Error saving game result:', error);
+      throw new Error('Failed to save game result');
+    }
+  }
+
+
+
 
 
 }

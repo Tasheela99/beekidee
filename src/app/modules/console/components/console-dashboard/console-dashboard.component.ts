@@ -8,6 +8,7 @@ import {MatDrawer, MatDrawerContainer} from "@angular/material/sidenav";
 import {MatList, MatListItem} from "@angular/material/list";
 import {NgOptimizedImage} from "@angular/common";
 import {StudentNamePopupComponent} from "../../../../components/student-name-popup/student-name-popup.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-console-dashboard',
@@ -47,9 +48,26 @@ export class ConsoleDashboardComponent {
     this.router.navigate(['/console/admin/dashboard/overview']);
   }
 
-  openPopup(route: string) {
-    this.targetRoute = route;
-    this.showPopup = true;
+  // openPopup(route: string) {
+  //   this.targetRoute = route;
+  //   this.showPopup = true;
+  // }
+
+  readonly dialog = inject(MatDialog);
+
+  openPopup(
+    enterAnimationDuration: string,
+    exitAnimationDuration: string,
+  ): void {
+    const dialogRef = this.dialog.open(StudentNamePopupComponent, {
+      width: '100vh',
+      height: '100vh',
+      enterAnimationDuration,
+      exitAnimationDuration,
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
   }
 
   onNameSubmit(name: string) {
