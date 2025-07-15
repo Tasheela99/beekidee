@@ -182,6 +182,11 @@ export class PreIntermediateLevelComponent {
       searchItem: '4',
       image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
     },
+    {
+      itemlist: ['5', '2', '1', '4', '3'],
+      searchItem: '5',
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
+    },
   ];
 
   start() {
@@ -309,7 +314,10 @@ export class PreIntermediateLevelComponent {
   }
 
   getTreeCount(): number {
-    return this.counter === 0 ? 3 : 4;
+    if (this.counter === 0) return 3;
+    if (this.counter === 1) return 4;
+    if (this.counter === 2) return 5;
+    return 3; // Default to 3 if counter is out of bounds
   }
 
   getTreeArray(): number[] {

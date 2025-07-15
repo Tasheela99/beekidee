@@ -182,6 +182,11 @@ export class PreIntermediateLevelComponent {
       searchItem: '4',
       image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
     },
+    {
+      itemlist: ['5', '2', '1', '4', '3'],
+      searchItem: '5',
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
+    },
   ];
 
   start() {
@@ -205,30 +210,53 @@ export class PreIntermediateLevelComponent {
       this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
       this.searchItem = this.dataList[this.counter].searchItem;
     } else {
-      console.log('Game completed!');
-      this.logGameCompletion();
-      this.reStartGame();
+      console.log('All questions completed! User can now finish the game manually.');
+      // Don't automatically finish - let user click finish button
+      // Just reset for the current question
+      this.reset();
     }
   }
 
+  // NEW METHOD: Finish the game manually
+  finishGame(): void {
+    console.log('Game finished manually by user:', this.userUid);
+    this.logGameCompletion();
+    this.reStartGame();
+  }
+
   private logGameCompletion(): void {
+    const questionsAttempted = this.counter + 1;
+    const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
+    const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
+    const isNaturalCompletion = questionsAttempted === this.dataList.length;
+
     console.log('=== GAME COMPLETED ===');
     console.log('User UID:', this.userUid);
+    console.log('Questions Attempted:', questionsAttempted);
+    console.log('Correct Answers:', correctAnswers);
     console.log('Final Total Marks:', this.totalMarks);
-    console.log('Total Questions:', this.dataList.length);
+    console.log('Total Questions Available:', this.dataList.length);
     console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
-    console.log('Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
+    console.log('Accuracy:', accuracy.toFixed(2) + '%');
+    console.log('Overall Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
     console.log('Completion Time:', new Date().toISOString());
+    console.log('Game Status:', isNaturalCompletion ? 'Completed All Questions' : 'Finished Early');
+    console.log('Completion Method:', isNaturalCompletion ? 'Natural' : 'Manual');
     console.log('=====================');
 
     const gameResult = {
       userUid: this.userUid,
+      questionsAttempted: questionsAttempted,
+      correctAnswers: correctAnswers,
       totalMarks: this.totalMarks,
       maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
-      percentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
+      accuracy: accuracy,
+      overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
       totalQuestions: this.dataList.length,
       completionTime: new Date().toISOString(),
-      gameType: 'pre-intermediate-level'
+      gameType: 'pre-intermediate-level',
+      gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
+      completionMethod: isNaturalCompletion ? 'natural' : 'manual'
     };
 
     console.log('Game result ready for Firebase:', gameResult);
@@ -286,7 +314,10 @@ export class PreIntermediateLevelComponent {
   }
 
   getTreeCount(): number {
-    return this.counter === 0 ? 3 : 4;
+    if (this.counter === 0) return 3;
+    if (this.counter === 1) return 4;
+    if (this.counter === 2) return 5;
+    return 3; // Default to 3 if counter is out of bounds
   }
 
   getTreeArray(): number[] {

@@ -88,16 +88,16 @@
   <!-- Footer Buttons -->
   <div class="footer" *ngIf="isStarted">
     <div class="d-flex align-items-center justify-content-center p-4 gap-2">
-      <button class="reset" (click)="reStartGame()">
-        <span>⟳</span> නැවත පටන් ගමු.
-      </button>
       <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
         <span>→</span> ඊළඟ ක්‍රියාකාරකම
       </button>
-      <!-- NEW: Finish Game Button -->
-      <button class="finish-btn" (click)="finishGame()">
-        <span>✓</span> සෙල්ලම අවසන් කරමු
+      <button class="reset" (click)="reStartGame()">
+        <span>⟳</span> නැවත පටන් ගමු.
       </button>
+      <!-- NEW: Finish Game Button -->
+      <button class="finish" (click)="finishGame()">
+              <span>🏁</span> ක්‍රීඩාව අවසන් කරන්න
+            </button>
     </div>
   </div>
 </div>
