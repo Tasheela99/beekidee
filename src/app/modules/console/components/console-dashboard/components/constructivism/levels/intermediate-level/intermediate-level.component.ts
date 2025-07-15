@@ -42,6 +42,7 @@ export class IntermediateLevelComponent {
   maxMarksPerQuestion = 10;
   currentUser$: Observable<any>;
   userUid: string | null = null;
+  gameStartTime: string | null = null;
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
@@ -185,6 +186,7 @@ export class IntermediateLevelComponent {
   }
 
   start() {
+    this.gameStartTime = new Date().toISOString();
     this.items = this.shuffleArray(['1', '4', '5', '7']);
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
@@ -195,7 +197,10 @@ export class IntermediateLevelComponent {
     if (outerDiv) {
       outerDiv.classList.add('started');
     }
-    console.log('Game started by user:', this.userUid);
+    console.log('=== GAME STARTED ===');
+    console.log('User UID:', this.userUid);
+    console.log('Game Start Time:', this.gameStartTime);
+    console.log('===================');
   }
 
   moveToNext() {
@@ -221,6 +226,7 @@ export class IntermediateLevelComponent {
   }
 
   private logGameCompletion(): void {
+    const gameEndTime = new Date().toISOString();
     const questionsAttempted = this.counter + 1;
     const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
     const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
@@ -228,6 +234,8 @@ export class IntermediateLevelComponent {
 
     console.log('=== GAME COMPLETED ===');
     console.log('User UID:', this.userUid);
+    console.log('Game Start Time:', this.gameStartTime || 'Not set');
+    console.log('Game End Time:', gameEndTime);
     console.log('Questions Attempted:', questionsAttempted);
     console.log('Correct Answers:', correctAnswers);
     console.log('Final Total Marks:', this.totalMarks);
@@ -235,7 +243,6 @@ export class IntermediateLevelComponent {
     console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
     console.log('Accuracy:', accuracy.toFixed(2) + '%');
     console.log('Overall Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
-    console.log('Completion Time:', new Date().toISOString());
     console.log('Game Status:', isNaturalCompletion ? 'Completed All Questions' : 'Finished Early');
     console.log('Completion Method:', isNaturalCompletion ? 'Natural' : 'Manual');
     console.log('=====================');
@@ -249,7 +256,8 @@ export class IntermediateLevelComponent {
       accuracy: accuracy,
       overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
       totalQuestions: this.dataList.length,
-      completionTime: new Date().toISOString(),
+      completionTime: gameEndTime,
+      gameStartTime: this.gameStartTime,
       gameType: 'intermediate-level',
       gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
       completionMethod: isNaturalCompletion ? 'natural' : 'manual'
@@ -272,6 +280,7 @@ export class IntermediateLevelComponent {
     this.items = [];
     this.searchItem = '';
     this.totalMarks = 0;
+    this.gameStartTime = null;
     const outerDiv = document.querySelector('.outer');
     if (outerDiv) {
       outerDiv.classList.remove('started');
