@@ -1,4 +1,3 @@
-// intermediate-level.component.ts
 import {Component, inject} from '@angular/core';
 import {MatDialog} from "@angular/material/dialog";
 import {
@@ -148,6 +147,10 @@ export class IntermediateLevelComponent {
     this.isStarted = true;
     this.basket = []; // Ensure basket is empty when starting
     this.errorMessage = ''; // Clear any previous error
+    const outerDiv = document.querySelector('.outer');
+    if (outerDiv) {
+      outerDiv.classList.add('started');
+    }
   }
 
   moveToNext() {
@@ -156,6 +159,10 @@ export class IntermediateLevelComponent {
       this.reset();
       this.items = this.shuffleArray(['1', '4', '5', '7']);
       this.searchItem = this.dataList[this.counter].searchItem;
+      const outerDiv = document.querySelector('.outer');
+      if (outerDiv) {
+        outerDiv.classList.add('started'); // Ensure started class persists
+      }
     } else {
       // Game completed
       console.log('Game completed!');
@@ -176,6 +183,10 @@ export class IntermediateLevelComponent {
     this.isStarted = false;
     this.items = [];
     this.searchItem = '';
+    const outerDiv = document.querySelector('.outer');
+    if (outerDiv) {
+      outerDiv.classList.remove('started');
+    }
   }
 
   onImageError(event: Event) {

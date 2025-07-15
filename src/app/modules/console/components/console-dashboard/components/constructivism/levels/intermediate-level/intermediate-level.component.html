@@ -1,15 +1,33 @@
 <div class="container-fluid m-0 p-0">
   <div class="row">
     <div class="col-12 m-0 p-0">
-      <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}">
+      <div class="outer" [ngClass]="{'answer-is-true': isAnswerCorrect}" [class.started]="isStarted">
+
+        <!-- Background Lines -->
+        <div class="lines">
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+          <div class="line"></div>
+        </div>
+
+        <!-- Header -->
         <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
           <h1>සොයන්න සහ ගනින්න:- {{ searchItem }} අකුරු කීයද ?</h1>
         </div>
+
+        <!-- Image -->
         <div class="image-container" *ngIf="isStarted && counter < dataList.length">
           <img [src]="dataList[counter].image" alt="Activity Image" class="activity-image" (error)="onImageError($event)">
         </div>
 
-        <!-- Wrap both drop lists in CdkDropListGroup -->
+        <!-- Game Content with Drag & Drop -->
         <div class="container-wrapper" *ngIf="isStarted && counter < dataList.length" cdkDropListGroup>
           <div class="example-container2">
             <h2>පිළිතුරු කොටුව</h2>
@@ -47,7 +65,6 @@
                     {{ item }}
                   </div>
                 }
-                <!-- Show placeholder when basket is empty -->
                 <div *ngIf="basket.length === 0" class="drop-placeholder">
                   ඔබේ පිළිතුර මෙතනට ඇදලා දාන්න.
                 </div>
@@ -56,11 +73,14 @@
           </div>
         </div>
 
+        <!-- Start Button -->
         <div class="buttons justify-content-center" *ngIf="!isStarted">
           <button class="start-btn" (click)="start()">
             <span>▶</span> සෙල්ලම් කරමු.
           </button>
         </div>
+
+        <!-- Footer Buttons -->
         <div class="footer" *ngIf="isStarted">
           <div class="d-flex align-items-center justify-content-center p-4 gap-2">
             <button class="reset" (click)="reStartGame()">
@@ -69,12 +89,22 @@
             <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
               <span>→</span> ඊළඟ ක්‍රියාකාරකම
             </button>
+            <button class="finish" (click)="finishGame()">
+              <span>🏁</span> ක්‍රීඩාව අවසන් කරන්න
+            </button>
           </div>
         </div>
 
+        <!-- Error Message -->
         <div *ngIf="errorMessage" class="error-message alert alert-danger">
           {{ errorMessage }}
         </div>
+
+        <!-- Marks Display -->
+        <div class="marks-display" *ngIf="isStarted">
+          <p>Current Marks: {{ currentTotalMarks }} / {{ maxPossibleMarks }}</p>
+        </div>
+
       </div>
     </div>
   </div>

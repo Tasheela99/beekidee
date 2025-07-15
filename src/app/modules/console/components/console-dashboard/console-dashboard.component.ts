@@ -60,8 +60,8 @@ export class ConsoleDashboardComponent {
     exitAnimationDuration: string,
   ): void {
     const dialogRef = this.dialog.open(StudentNamePopupComponent, {
-      width: '550px',
-      maxHeight: '500px',
+      width: '100vh',
+      height: '100vh',
       enterAnimationDuration,
       exitAnimationDuration,
     });
