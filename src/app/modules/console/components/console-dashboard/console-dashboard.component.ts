@@ -35,9 +35,6 @@ export class ConsoleDashboardComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  showPopup: boolean = false;
-  targetRoute: string = '';
-
   logout() {
     this.auth.signOut().then(()=>{
       this.router.navigateByUrl('/security/sign-in');
@@ -47,11 +44,6 @@ export class ConsoleDashboardComponent {
   goToOverview() {
     this.router.navigate(['/console/admin/dashboard/overview']);
   }
-
-  // openPopup(route: string) {
-  //   this.targetRoute = route;
-  //   this.showPopup = true;
-  // }
 
   readonly dialog = inject(MatDialog);
 
@@ -70,13 +62,4 @@ export class ConsoleDashboardComponent {
     });
   }
 
-  onNameSubmit(name: string) {
-    console.log('Name submitted:', name);
-    this.router.navigate([this.targetRoute]);
-    this.showPopup = false;
-  }
-
-  onNameCancel() {
-    this.showPopup = false;
-  }
 }
