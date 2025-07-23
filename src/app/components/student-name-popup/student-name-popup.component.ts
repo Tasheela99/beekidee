@@ -57,12 +57,12 @@ export class StudentNamePopupComponent {
 
             // Check if we are on the specific route
             if (this.router.url === '/console/admin/dashboard/constructivism-plus-attention/pre-intermediate') {
-              if (currentOverallAttention < 70 && !this.isDialogOpen) {
+              if (currentOverallAttention < 65 && !this.isDialogOpen) {
                 console.log("You lost your attention");
                 this.openDialog();  // Open the dialog if route matches
               }
 
-              if (currentOverallAttention >= 70 && this.isDialogOpen) {
+              if (currentOverallAttention >= 65 && this.isDialogOpen) {
                 console.log("Your attention is back");
                 this.closeDialog();  // Close the dialog if route matches
               }
