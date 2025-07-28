@@ -8,7 +8,7 @@
 </mat-toolbar>
 
 <mat-drawer-container class="example-container" autosize>
-  <mat-drawer #drawer class="example-sidenav" mode="over">
+  <mat-drawer #drawer class="example-sidenav" mode="side" opened="true">
     <mat-list>
       <mat-list-item routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
         <button class="w-100 d-flex align-items-center justify-content-start" mat-button routerLink="/console/admin/dashboard/overview" (click)="goToOverview()">Overview</button>

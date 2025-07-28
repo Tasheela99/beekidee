@@ -11,6 +11,8 @@ import {
 import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
 import {NgClass, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
+import { Auth, user } from '@angular/fire/auth';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-medium-level',
@@ -36,7 +38,22 @@ export class IntermediateLevelComponent {
   isAnswerCorrect = false;
   errorMessage: string = '';
 
+  totalMarks = 0;
+  maxMarksPerQuestion = 10;
+  currentUser$: Observable<any>;
+  userUid: string | null = null;
+  gameStartTime: string | null = null;
+
   dialog = inject(MatDialog);
+  private auth = inject(Auth);
+
+   constructor() {
+    this.currentUser$ = user(this.auth);
+    this.currentUser$.subscribe(user => {
+      this.userUid = user ? user.uid : null;
+      console.log('Current user UID:', this.userUid);
+    });
+  }
 
   dataList: any = [
     {
@@ -168,6 +185,54 @@ export class IntermediateLevelComponent {
       console.log('Game completed!');
       this.reStartGame();
     }
+  }
+
+
+  finishGame(): void {
+    console.log('Game finished manually by user:', this.userUid);
+    this.logGameCompletion();
+    this.reStartGame();
+  }
+
+  private logGameCompletion(): void {
+    const gameEndTime = new Date().toISOString();
+    const questionsAttempted = this.counter + 1;
+    const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
+    const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
+    const isNaturalCompletion = questionsAttempted === this.dataList.length;
+
+    console.log('=== GAME COMPLETED ===');
+    console.log('User UID:', this.userUid);
+    console.log('Game Start Time:', this.gameStartTime || 'Not set');
+    console.log('Game End Time:', gameEndTime);
+    console.log('Questions Attempted:', questionsAttempted);
+    console.log('Correct Answers:', correctAnswers);
+    console.log('Final Total Marks:', this.totalMarks);
+    console.log('Total Questions Available:', this.dataList.length);
+    console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
+    console.log('Accuracy:', accuracy.toFixed(2) + '%');
+    console.log('Overall Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
+    console.log('Game Status:', isNaturalCompletion ? 'Completed All Questions' : 'Finished Early');
+    console.log('Completion Method:', isNaturalCompletion ? 'Natural' : 'Manual');
+    console.log('=====================');
+
+    const gameResult = {
+      userUid: this.userUid,
+      questionsAttempted: questionsAttempted,
+      correctAnswers: correctAnswers,
+      totalMarks: this.totalMarks,
+      maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
+      accuracy: accuracy,
+      overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
+      totalQuestions: this.dataList.length,
+      completionTime: gameEndTime,
+      gameStartTime: this.gameStartTime,
+      gameType: 'intermediate-level',
+      gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
+      completionMethod: isNaturalCompletion ? 'natural' : 'manual'
+    };
+
+    console.log('Game result ready for Firebase:', gameResult);
   }
 
   reset() {

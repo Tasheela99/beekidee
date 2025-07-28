@@ -221,7 +221,7 @@
   margin: 20px 0;
 }
 
-.start-btn, .reset, .next {
+.start-btn, .reset, .next, .finish {
   padding: 18px 35px;
   border: none;
   border-radius: 25px;
@@ -262,21 +262,30 @@
 }
 
 .reset {
-  background-color: #f44336;
+  background: #0560aa;
   color: white;
 }
 
 .reset:hover {
-    background-color: #da190b;
+  background: #02355f;
 }
 
 .next {
-  background-color: #8BC34A;
+  background: linear-gradient(to top, #00154c, #12376e, #23487f);
   color: white;
 }
 
 .next:hover {
-  background-color: #7cb342;
+  background: linear-gradient(to top, #000a22, #072655, #0e2b57);
+}
+
+.finish {
+  background: #da2f23;
+  color: white;
+}
+
+.finish:hover {
+  background: #da190b;
 }
 
 .footer {
@@ -294,6 +303,7 @@
   }
   .image-container {
     flex-wrap: wrap;
+    justify-content: center;
   }
   .tree-image {
     max-width: 20%;
@@ -342,16 +352,20 @@
   }
   .image-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns for 2 trees per row */
+    grid-template-columns: repeat(3, 1fr); /* Three columns for 3 trees in first row */
     grid-template-rows: 1fr 1fr; /* Two rows */
-    gap: 50px; /* Match your design spacing */
+    gap: 20px; /* Reduced from 50px to reclaim space */
     justify-items: center; /* Center horizontally */
     align-items: center; /* Center vertically */
-    min-height: 600px; /* Ensure vertical centering */
+    min-height: 600px; /* Increased to fit larger trees */
     max-width: 100%; /* Fit within col-md-6 */
   }
   .tree-image {
-    max-width: 40%; /* Adjusted to fit 2 trees per row, as large as possible */
+    max-width: 50%; /* Increased from 40% to maximize size */
     height: auto;
+  }
+  .image-container > :nth-child(n+4) { /* Place 4th and 5th trees in second row */
+    grid-column: span 1; /* Each takes one column */
+    grid-row: 2;
   }
 }
