@@ -1,8 +1,21 @@
 import {inject, Injectable} from '@angular/core';
-import {Firestore, doc, setDoc, deleteDoc, getDocs, getDoc, collection, query, where} from '@angular/fire/firestore';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  deleteDoc,
+  getDocs,
+  getDoc,
+  collection,
+  query,
+  where,
+  addDoc, collectionGroup, updateDoc, arrayUnion
+} from '@angular/fire/firestore';
 import {ref, Storage, uploadBytes, getDownloadURL, deleteObject} from '@angular/fire/storage';
 import {v4 as uuidv4} from 'uuid';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {catchError, from, Observable, of, switchMap} from "rxjs";
+import {map} from "rxjs/operators";
 
 export interface Lesson {
   lessonId: string;
@@ -193,24 +206,90 @@ export class ConsoleService {
     }
   }
 
+  logAnswer(answerLog: {
+    userUid: string | null;
+    questionNumber: number;
+    correctAnswer: string;
+    marksAwarded: number;
+    totalMarks: number;
+    timestamp: string;
+    gameType: string
+  }): Observable<void> {
+    if (!answerLog.userUid) {
+      console.warn('Cannot log answer: userUid is missing');
+      return from(Promise.reject('User UID is missing'));
+    }
 
-  public async logGameCompletion(gameResult: any): Promise<void> {
-    if (!gameResult.userUid) {
-      console.error('User UID is missing');
-      return;
-    }
-    try {
-      const gameCompletionRef = doc(collection(this.firestore, 'gameResults', gameResult.userUid, 'completedGames'));
-      await setDoc(gameCompletionRef, gameResult);
-      console.log('Game result saved successfully');
-    } catch (error) {
-      console.error('Error saving game result:', error);
-      throw new Error('Failed to save game result');
-    }
+    const answersCollection = collection(this.firestore, `users/${answerLog.userUid}/answers`);
+    return from(addDoc(answersCollection, {
+      ...answerLog,
+      createdAt: answerLog.timestamp
+    })).pipe(
+      map(() => void 0)
+    );
+  }
+
+  /**
+   * Logs game completion data to Firestore.
+   * @param gameResult The game result object containing userUid, questionsAttempted, correctAnswers, totalMarks, maxPossibleMarks, accuracy, overallPercentage, totalQuestions, completionTime, gameStartTime, gameType, gameStatus, and completionMethod.
+   * @returns An Observable that resolves when the game result is logged successfully.
+   */
+  logGameCompletion(gameResult: {
+    userUid: string;
+    questionsAttempted: number;
+    correctAnswers: number;
+    totalMarks: number;
+    maxPossibleMarks: number;
+    accuracy: number;
+    overallPercentage: number;
+    totalQuestions: number;
+    completionTime: string;
+    gameStartTime: string | null;
+    gameType: string;
+    gameStatus: string;
+    completionMethod: string;
+  }): Observable<void> {
+    const gamesCollection = collection(this.firestore, `users/${gameResult.userUid}/gameResults`);
+    return from(addDoc(gamesCollection, {
+      ...gameResult,
+      createdAt: gameResult.completionTime
+    })).pipe(
+      map(() => void 0)
+    );
   }
 
 
+  saveResults(gameResult: { name: string; marks: number; session: string }): Observable<void> {
+    const studentSessionRef = doc(
+      this.firestore,
+      `gameResults/${gameResult.name}/sessions/${gameResult.session}` // Store in subcollection
+    );
 
+    return from(setDoc(studentSessionRef, {
+      marks: gameResult.marks,
+      timestamp: new Date()
+    }));
+  }
 
+  getResultsBySession(sessionId: string): Observable<any[]> {
+    // Query all "sessions" subcollections
+    const sessionsQuery = collectionGroup(this.firestore, 'sessions');
 
+    return from(getDocs(sessionsQuery)).pipe(
+      map(snapshot => {
+        return snapshot.docs
+          .filter(sessionDoc => sessionDoc.id === sessionId) // Match session ID
+          .map(sessionDoc => ({
+            name: sessionDoc.ref.parent.parent?.id, // Student name
+            session: sessionId,
+            marks: sessionDoc.data()['marks'],
+            timestamp: sessionDoc.data()['timestamp']?.toDate()
+          }));
+      }),
+      catchError(error => {
+        console.error('Firestore Error:', error);
+        return of([]);
+      })
+    );
+  }
 }
