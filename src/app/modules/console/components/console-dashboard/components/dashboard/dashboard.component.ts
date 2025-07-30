@@ -20,6 +20,21 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import {ConsoleService} from "../../../../../../services/console.service";
 import {DataChartComponent} from "../../../../../../components/data-chart/data-chart.component";
+import {
+  ApexNonAxisChartSeries,
+  ApexPlotOptions,
+  ApexChart,
+  ApexFill,
+  ChartComponent,
+  ApexStroke,
+  ApexAxisChartSeries,
+  ApexDataLabels,
+  ApexXAxis,
+  ApexYAxis,
+  ApexTitleSubtitle,
+  ApexMarkers,
+  ApexForecastDataPoints, ApexLegend,
+} from "ng-apexcharts";
 
 interface StudentProgress {
   studentId: string;
