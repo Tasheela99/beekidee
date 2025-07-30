@@ -5,9 +5,13 @@ import { Auth, user } from '@angular/fire/auth';
 import { ConsoleService } from '../../../../../../../../services/console.service';
 import { CdkDragDrop, CdkDrag, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
 import { AnimationDialogComponent } from "../../../../../../../../components/animation-dialog/animation-dialog.component";
-import { ErrorDialogComponent } from '../../../../../../../../components/error-dialog/error-dialog.component';  // Import error dialog
+import { ErrorDialogComponent } from '../../../../../../../../components/error-dialog/error-dialog.component';
 import { NgClass, NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
+import {
+  SaveResultsPopUpComponent
+} from "../../../../../../../../components/save-results-pop-up/save-results-pop-up.component";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-medium-level',
@@ -18,7 +22,8 @@ import { FormsModule } from "@angular/forms";
     NgIf,
     NgClass,
     FormsModule,
-    CdkDropListGroup
+    CdkDropListGroup,
+    MatButton
   ],
   templateUrl: './intermediate-level.component.html',
   styleUrl: './intermediate-level.component.scss'
@@ -40,9 +45,9 @@ export class IntermediateLevelComponent {
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
-  private consoleService = inject(ConsoleService);  // Inject ConsoleService
+  private consoleService = inject(ConsoleService);
 
-  wrongAnswerCount: number = 0;  // Track the number of wrong answers
+  wrongAnswerCount: number = 0;
 
   constructor() {
     this.currentUser$ = user(this.auth);
@@ -102,15 +107,15 @@ export class IntermediateLevelComponent {
     const correctCount = this.dataList[this.counter].correctCount;
     if (this.basket.length === 1 && parseInt(this.basket[0]) === correctCount) {
       this.itemFound = true;
-      this.wrongAnswerCount = 0;  // Reset on correct answer
+      this.wrongAnswerCount = 0;
     } else {
       this.itemFound = false;
-      this.wrongAnswerCount += 1;  // Increment on wrong answer
+      this.wrongAnswerCount += 1;
     }
 
     this.setAlerts(this.itemFound);
     if (this.wrongAnswerCount >= 2) {
-      this.showErrorDialog();  // Show error popup after two wrong attempts
+      this.showErrorDialog();
     }
   }
 
@@ -161,41 +166,17 @@ export class IntermediateLevelComponent {
       gameType: 'intermediate-level'
     };
 
-    // Use ConsoleService to save the game result
     if (this.userUid) {
-      const gameEndTime = new Date().toISOString();
-      const questionsAttempted = this.counter + 1;
-      const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
-      const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
-      const isNaturalCompletion = questionsAttempted === this.dataList.length;
-
-      const gameResult = {
-        userUid: this.userUid,
-        questionsAttempted: questionsAttempted,
-        correctAnswers: correctAnswers,
-        totalMarks: this.totalMarks,
-        maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
-        accuracy: accuracy,
-        overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
-        totalQuestions: this.dataList.length,
-        completionTime: gameEndTime,
-        gameStartTime: this.gameStartTime,
-        gameType: 'intermediate-level',
-        gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
-        completionMethod: isNaturalCompletion ? 'natural' : 'manual'
-      };
-
-      this.consoleService.logGameCompletion(gameResult)
-        .then(() => {
-          console.log('Game result saved successfully');
-        })
-        .catch((error) => {
-          console.error('Error saving game result:', error);
+      this.consoleService.logAnswer(answerLog)
+        .subscribe({
+          next: () => console.log('Answer log saved successfully'),
+          error: (error) => console.error('Error saving answer log:', error)
         });
+    } else {
+      console.warn('Cannot log answer: userUid is missing');
     }
   }
 
-  // Show error dialog after two wrong answers
   private showErrorDialog(): void {
     const dialogRef = this.dialog.open(ErrorDialogComponent, {
       width: '300px'
@@ -203,7 +184,7 @@ export class IntermediateLevelComponent {
 
     dialogRef.afterClosed().subscribe(() => {
       console.log('Error dialog closed');
-      this.reset(); // Optionally reset after showing the error dialog
+      this.reset();
     });
   }
 
@@ -247,13 +228,48 @@ export class IntermediateLevelComponent {
         outerDiv.classList.add('started');
       }
     } else {
+      this.logGameCompletion();
       this.reset();
     }
   }
 
   finishGame(): void {
-    //this.logGameCompletion();
+    this.logGameCompletion();
     this.reStartGame();
+  }
+
+  private logGameCompletion(): void {
+    if (this.userUid && this.gameStartTime) {
+      const gameEndTime = new Date().toISOString();
+      const questionsAttempted = this.counter + 1;
+      const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
+      const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
+      const isNaturalCompletion = questionsAttempted === this.dataList.length;
+
+      const gameResult = {
+        userUid: this.userUid,
+        questionsAttempted: questionsAttempted,
+        correctAnswers: correctAnswers,
+        totalMarks: this.totalMarks,
+        maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
+        accuracy: accuracy,
+        overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
+        totalQuestions: this.dataList.length,
+        completionTime: gameEndTime,
+        gameStartTime: this.gameStartTime,
+        gameType: 'intermediate-level',
+        gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
+        completionMethod: isNaturalCompletion ? 'natural' : 'manual'
+      };
+
+      this.consoleService.logGameCompletion(gameResult)
+        .subscribe({
+          next: () => console.log('Game result saved successfully'),
+          error: (error) => console.error('Error saving game result:', error)
+        });
+    } else {
+      console.warn('Cannot log game completion: userUid or gameStartTime is missing');
+    }
   }
 
   reset() {
@@ -261,7 +277,7 @@ export class IntermediateLevelComponent {
     this.itemFound = false;
     this.basket = [];
     this.errorMessage = '';
-    this.wrongAnswerCount = 0;  // Reset the wrong answer count
+    this.wrongAnswerCount = 0;
   }
 
   reStartGame() {
@@ -297,5 +313,19 @@ export class IntermediateLevelComponent {
 
   get maxPossibleMarks(): number {
     return this.dataList.length * this.maxMarksPerQuestion;
+  }
+
+
+  openSaveResultDialog(): void {
+    const dialogRef = this.dialog.open(SaveResultsPopUpComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.consoleService.saveResults(result).subscribe({
+          next: () => alert('Result saved!'),
+          error: err => alert('Error saving result: ' + err)
+        });
+      }
+    });
   }
 }

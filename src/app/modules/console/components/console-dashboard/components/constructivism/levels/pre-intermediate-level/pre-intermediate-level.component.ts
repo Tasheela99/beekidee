@@ -1,17 +1,11 @@
-import {Component, inject} from '@angular/core';
-import {MatDialog} from "@angular/material/dialog";
-import {
-  CdkDrag,
-  CdkDragDrop,
-  CdkDropList,
-  CdkDropListGroup,
-  moveItemInArray,
-  transferArrayItem
-} from "@angular/cdk/drag-drop";
-import {NgClass, NgIf, CommonModule} from "@angular/common";
+import { Component, inject } from '@angular/core';
+import { MatDialog } from "@angular/material/dialog";
+import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
+import { NgClass, NgIf, CommonModule } from "@angular/common";
 import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
-import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
+import { AnimationDialogComponent } from "../../../../../../../../components/animation-dialog/animation-dialog.component";
+import { ConsoleService } from '../../../../../../../../services/console.service';
 
 @Component({
   selector: 'app-pre-intermediate-level',
@@ -20,7 +14,6 @@ import {AnimationDialogComponent} from "../../../../../../../../components/anima
     CdkDropList,
     CdkDrag,
     NgIf,
-    NgClass,
     CdkDropListGroup,
     CommonModule
   ],
@@ -37,15 +30,15 @@ export class PreIntermediateLevelComponent {
   isStarted = false;
   isAnswerCorrect = false;
   showCamera = true;
-
-  // Marking system properties
   totalMarks = 0;
   maxMarksPerQuestion = 10;
   currentUser$: Observable<any>;
   userUid: string | null = null;
+  gameStartTime: string | null = null; // Added to track game start time
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
+  private consoleService = inject(ConsoleService); // Inject ConsoleService
 
   constructor() {
     this.currentUser$ = user(this.auth);
@@ -111,7 +104,6 @@ export class PreIntermediateLevelComponent {
   setAlerts(answer: boolean) {
     this.isAnswerCorrect = answer;
 
-    // Show animation dialog
     this.openAnimationDialog(answer);
 
     if (answer) {
@@ -152,7 +144,15 @@ export class PreIntermediateLevelComponent {
       gameType: 'pre-intermediate-level'
     };
 
-    console.log('Answer log ready for Firebase:', answerLog);
+    if (this.userUid) {
+      this.consoleService.logAnswer(answerLog)
+        .subscribe({
+          next: () => console.log('Answer log saved successfully'),
+          error: (error) => console.error('Error saving answer log:', error)
+        });
+    } else {
+      console.warn('Cannot log answer: userUid is missing');
+    }
   }
 
   private openAnimationDialog(isCorrect: boolean): void {
@@ -190,6 +190,7 @@ export class PreIntermediateLevelComponent {
   ];
 
   start() {
+    this.gameStartTime = new Date().toISOString(); // Set game start time
     this.items = this.shuffleArray([...this.dataList[0].itemlist]);
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
@@ -210,14 +211,11 @@ export class PreIntermediateLevelComponent {
       this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
       this.searchItem = this.dataList[this.counter].searchItem;
     } else {
-      console.log('All questions completed! User can now finish the game manually.');
-      // Don't automatically finish - let user click finish button
-      // Just reset for the current question
+      this.logGameCompletion();
       this.reset();
     }
   }
 
-  // NEW METHOD: Finish the game manually
   finishGame(): void {
     console.log('Game finished manually by user:', this.userUid);
     this.logGameCompletion();
@@ -225,41 +223,51 @@ export class PreIntermediateLevelComponent {
   }
 
   private logGameCompletion(): void {
-    const questionsAttempted = this.counter + 1;
-    const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
-    const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
-    const isNaturalCompletion = questionsAttempted === this.dataList.length;
+    if (this.userUid && this.gameStartTime) {
+      const gameEndTime = new Date().toISOString();
+      const questionsAttempted = this.counter + 1;
+      const correctAnswers = this.totalMarks / this.maxMarksPerQuestion;
+      const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
+      const isNaturalCompletion = questionsAttempted === this.dataList.length;
 
-    console.log('=== GAME COMPLETED ===');
-    console.log('User UID:', this.userUid);
-    console.log('Questions Attempted:', questionsAttempted);
-    console.log('Correct Answers:', correctAnswers);
-    console.log('Final Total Marks:', this.totalMarks);
-    console.log('Total Questions Available:', this.dataList.length);
-    console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
-    console.log('Accuracy:', accuracy.toFixed(2) + '%');
-    console.log('Overall Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
-    console.log('Completion Time:', new Date().toISOString());
-    console.log('Game Status:', isNaturalCompletion ? 'Completed All Questions' : 'Finished Early');
-    console.log('Completion Method:', isNaturalCompletion ? 'Natural' : 'Manual');
-    console.log('=====================');
+      console.log('=== GAME COMPLETED ===');
+      console.log('User UID:', this.userUid);
+      console.log('Questions Attempted:', questionsAttempted);
+      console.log('Correct Answers:', correctAnswers);
+      console.log('Final Total Marks:', this.totalMarks);
+      console.log('Total Questions Available:', this.dataList.length);
+      console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
+      console.log('Accuracy:', accuracy.toFixed(2) + '%');
+      console.log('Overall Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
+      console.log('Completion Time:', gameEndTime);
+      console.log('Game Status:', isNaturalCompletion ? 'Completed All Questions' : 'Finished Early');
+      console.log('Completion Method:', isNaturalCompletion ? 'Natural' : 'Manual');
+      console.log('=====================');
 
-    const gameResult = {
-      userUid: this.userUid,
-      questionsAttempted: questionsAttempted,
-      correctAnswers: correctAnswers,
-      totalMarks: this.totalMarks,
-      maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
-      accuracy: accuracy,
-      overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
-      totalQuestions: this.dataList.length,
-      completionTime: new Date().toISOString(),
-      gameType: 'pre-intermediate-level',
-      gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
-      completionMethod: isNaturalCompletion ? 'natural' : 'manual'
-    };
+      const gameResult = {
+        userUid: this.userUid,
+        questionsAttempted: questionsAttempted,
+        correctAnswers: correctAnswers,
+        totalMarks: this.totalMarks,
+        maxPossibleMarks: this.dataList.length * this.maxMarksPerQuestion,
+        accuracy: accuracy,
+        overallPercentage: ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100),
+        totalQuestions: this.dataList.length,
+        completionTime: gameEndTime,
+        gameStartTime: this.gameStartTime,
+        gameType: 'pre-intermediate-level',
+        gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
+        completionMethod: isNaturalCompletion ? 'natural' : 'manual'
+      };
 
-    console.log('Game result ready for Firebase:', gameResult);
+      this.consoleService.logGameCompletion(gameResult)
+        .subscribe({
+          next: () => console.log('Game result saved successfully'),
+          error: (error) => console.error('Error saving game result:', error)
+        });
+    } else {
+      console.warn('Cannot log game completion: userUid or gameStartTime is missing');
+    }
   }
 
   reset() {
@@ -275,6 +283,7 @@ export class PreIntermediateLevelComponent {
     this.items = [];
     this.searchItem = '';
     this.totalMarks = 0;
+    this.gameStartTime = null;
     const outerDiv = document.querySelector('.outer');
     if (outerDiv) {
       outerDiv.classList.remove('started');

@@ -18,6 +18,23 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
+import {ConsoleService} from "../../../../../../services/console.service";
+import {DataChartComponent} from "../../../../../../components/data-chart/data-chart.component";
+import {
+  ApexNonAxisChartSeries,
+  ApexPlotOptions,
+  ApexChart,
+  ApexFill,
+  ChartComponent,
+  ApexStroke,
+  ApexAxisChartSeries,
+  ApexDataLabels,
+  ApexXAxis,
+  ApexYAxis,
+  ApexTitleSubtitle,
+  ApexMarkers,
+  ApexForecastDataPoints, ApexLegend,
+} from "ng-apexcharts";
 
 interface StudentProgress {
   studentId: string;
@@ -63,7 +80,8 @@ interface ProgressStats {
     FormsModule,
     MatIconButton,
     DecimalPipe,
-    MatTooltip
+    MatTooltip,
+    DataChartComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -77,6 +95,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoadingResults = true;
   isRateLimitReached = false;
   selectedSession: string = 'all';
+  session0001DataSource = new MatTableDataSource<{ name: string; marks: number }>([]);
+  session0002DataSource = new MatTableDataSource<{ name: string; marks: number }>([]);
+
+  @ViewChild('paginator0001') paginator0001!: MatPaginator;
+  @ViewChild('paginator0002') paginator0002!: MatPaginator;
 
   // Debug properties
   debugInfo = {
@@ -115,16 +138,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private firebaseDataService: FirebaseDataService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private consoleService:ConsoleService
   ) {}
 
   ngOnInit() {
     console.log('Dashboard component initialized');
     this.loadData();
+    this.loadSessionResults();
   }
 
   ngAfterViewInit() {
     console.log('AfterViewInit called');
+    this.session0001DataSource.paginator = this.paginator001;
+    this.session0002DataSource.paginator = this.paginator002;
     // Initial setup - will be called again when data is loaded
     this.setupAllPaginatorsAndSorts();
   }
@@ -521,5 +548,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('Progress dialog was closed');
       });
     }
+  }
+
+
+
+  loadSessionResults() {
+    this.consoleService.getResultsBySession("001").subscribe(results => {
+      console.log(results)
+      this.session0001DataSource.data = results;
+    });
+
+    this.consoleService.getResultsBySession("002").subscribe(results => {
+      console.log(results)
+      this.session0002DataSource.data = results;
+    });
+
+    this.consoleService.getAllResults().subscribe(r=>{
+      console.log(r)
+    })
   }
 }
