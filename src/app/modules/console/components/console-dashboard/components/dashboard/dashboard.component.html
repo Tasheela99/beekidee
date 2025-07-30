@@ -145,14 +145,14 @@
           </div>
 
           <!-- Progress Table -->
+          <!-- Progress Table -->
           <div class="table-container mat-elevation-z2" *ngIf="progressDataSource.data.length > 0">
             <table mat-table [dataSource]="progressDataSource" class="example-table w-100" matSort
                    #progressSort="matSort"
                    matSortActive="studentId" matSortDirection="asc">
-
               <!-- Student ID Column -->
               <ng-container matColumnDef="studentId">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Student ID</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>
                 <td mat-cell *matCellDef="let row" class="clickable-cell fw-bold">
                   {{ row.studentId }}
                 </td>
@@ -162,14 +162,14 @@
               <ng-container matColumnDef="session001Status">
                 <th mat-header-cell *matHeaderCellDef>Session 001</th>
                 <td mat-cell *matCellDef="let row">
-            <span *ngIf="row.hasSession001" class="badge bg-success">
-              <mat-icon class="small-icon me-1">check_circle</mat-icon>
-              Participated
-            </span>
-                  <span *ngIf="!row.hasSession001" class="badge bg-secondary">
-              <mat-icon class="small-icon me-1">remove_circle</mat-icon>
-              Not Participated
-            </span>
+        <span *ngIf="row.hasSession001" class="badge bg-success d-flex align-items-center justify-content-center">
+          <mat-icon class="small-icon me-1">check_circle</mat-icon>
+          Participated
+        </span>
+                  <span *ngIf="!row.hasSession001" class="badge bg-secondary d-flex align-items-center justify-content-center">
+          <mat-icon class="small-icon me-1">remove_circle</mat-icon>
+          Not Participated
+        </span>
                 </td>
               </ng-container>
 
@@ -177,14 +177,14 @@
               <ng-container matColumnDef="session002Status">
                 <th mat-header-cell *matHeaderCellDef>Session 002</th>
                 <td mat-cell *matCellDef="let row">
-            <span *ngIf="row.hasSession002" class="badge bg-success">
-              <mat-icon class="small-icon me-1">check_circle</mat-icon>
-              Participated
-            </span>
-                  <span *ngIf="!row.hasSession002" class="badge bg-secondary">
-              <mat-icon class="small-icon me-1">remove_circle</mat-icon>
-              Not Participated
-            </span>
+        <span *ngIf="row.hasSession002" class="badge bg-success d-flex align-items-center justify-content-center">
+          <mat-icon class="small-icon me-1">check_circle</mat-icon>
+          Participated
+        </span>
+                  <span *ngIf="!row.hasSession002" class="badge bg-secondary d-flex align-items-center justify-content-center">
+          <mat-icon class="small-icon me-1">remove_circle</mat-icon>
+          Not Participated
+        </span>
                 </td>
               </ng-container>
 
@@ -192,15 +192,15 @@
               <ng-container matColumnDef="progressStatus">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Progress Status</th>
                 <td mat-cell *matCellDef="let row">
-            <span class="badge"
-                  [class.bg-success]="row.progressStatus === 'improved'"
-                  [class.bg-warning]="row.progressStatus === 'declined'"
-                  [class.bg-info]="row.progressStatus === 'same'"
-                  [class.bg-primary]="row.progressStatus === 'new'"
-                  [class.bg-secondary]="row.progressStatus === 'incomplete'">
-              <mat-icon class="small-icon me-1">{{ getProgressStatusIcon(row.progressStatus) }}</mat-icon>
-              {{ getProgressStatusText(row.progressStatus) }}
-            </span>
+        <span class="badge d-flex align-items-center justify-content-center"
+              [class.bg-success]="row.progressStatus === 'improved'"
+              [class.bg-warning]="row.progressStatus === 'declined'"
+              [class.bg-info]="row.progressStatus === 'same'"
+              [class.bg-primary]="row.progressStatus === 'new'"
+              [class.bg-secondary]="row.progressStatus === 'incomplete'">
+          <mat-icon class="small-icon me-1">{{ getProgressStatusIcon(row.progressStatus) }}</mat-icon>
+          {{ getProgressStatusText(row.progressStatus) }}
+        </span>
                 </td>
               </ng-container>
 
@@ -225,7 +225,7 @@
             <mat-paginator
               #progressPaginator="matPaginator"
               [length]="progressDataSource.data.length"
-              [pageSize]="10"
+              [pageSize]="5"
               [pageSizeOptions]="[5, 10, 25, 50]"
               aria-label="Select page for progress data"
               showFirstLastButtons="true">
@@ -289,7 +289,7 @@
               <table mat-table [dataSource]="dataSource001" class="example-table" matSort #sort001="matSort"
                      matSortActive="studentId" matSortDirection="asc">
                 <ng-container matColumnDef="studentId">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Student ID</th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>
                   <td mat-cell *matCellDef="let row" (click)="openDialog(row.studentId, row.sessionNumber)"
                       class="clickable-cell">{{ row.studentId }}
                   </td>
@@ -323,7 +323,7 @@
               <table mat-table [dataSource]="dataSource002" class="example-table" matSort #sort002="matSort"
                      matSortActive="studentId" matSortDirection="asc">
                 <ng-container matColumnDef="studentId">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Student ID</th>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Student Name</th>
                   <td mat-cell *matCellDef="let row" (click)="openDialog(row.studentId, row.sessionNumber)"
                       class="clickable-cell">{{ row.studentId }}
                   </td>
@@ -348,15 +348,59 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-12 col-lg-6">
+          <mat-card class="mt-4 border border-primary">
+            <mat-card-title class="m-2">Session 001 Results</mat-card-title>
+            <mat-card-content>
+              <table mat-table [dataSource]="session0001DataSource" class="mat-elevation-z2 w-100">
 
-      <!-- Data Tables -->
-      <div *ngIf="!isLoadingResults && !isRateLimitReached">
-        <!-- Session 001 Table -->
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef>Student Name</th>
+                  <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+                </ng-container>
 
+                <ng-container matColumnDef="marks">
+                  <th mat-header-cell *matHeaderCellDef>Marks</th>
+                  <td mat-cell *matCellDef="let element">{{ element.marks }}</td>
+                </ng-container>
 
-        <!-- Session 002 Table -->
+                <tr mat-header-row *matHeaderRowDef="['name', 'marks']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['name', 'marks']"></tr>
+              </table>
 
+              <mat-paginator [pageSizeOptions]="[5, 10, 20]" #paginator0001 showFirstLastButtons></mat-paginator>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="col-12 col-lg-6">
+          <mat-card class="mt-4 border border-warning">
+            <mat-card-title class="m-2">Session 002 Results</mat-card-title>
+            <mat-card-content>
+              <table mat-table [dataSource]="session0002DataSource" class="mat-elevation-z2 w-100">
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef>Student Name</th>
+                  <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="marks">
+                  <th mat-header-cell *matHeaderCellDef>Marks</th>
+                  <td mat-cell *matCellDef="let element">{{ element.marks }}</td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="['name', 'marks']"></tr>
+                <tr mat-row *matRowDef="let row; columns: ['name', 'marks']"></tr>
+              </table>
+
+              <mat-paginator [pageSizeOptions]="[5, 10, 20]" #paginator0002 showFirstLastButtons></mat-paginator>
+            </mat-card-content>
+          </mat-card>
+
+        </div>
       </div>
     </div>
   </div>
+
+  <app-data-chart></app-data-chart>
 </div>

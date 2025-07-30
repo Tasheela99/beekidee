@@ -95,17 +95,10 @@
           </div>
         </div>
 
-        <!-- Error Message -->
-        <div *ngIf="errorMessage" class="error-message alert alert-danger">
-          {{ errorMessage }}
-        </div>
-
-        <!-- Marks Display -->
-        <div class="marks-display" *ngIf="isStarted">
-          <p>Current Marks: {{ currentTotalMarks }} / {{ maxPossibleMarks }}</p>
-        </div>
-
       </div>
     </div>
+  </div>
+  <div class="row mt-5">
+    <button mat-stroked-button class="bg-primary text-white" (click)="openSaveResultDialog()">Save Results</button>
   </div>
 </div>

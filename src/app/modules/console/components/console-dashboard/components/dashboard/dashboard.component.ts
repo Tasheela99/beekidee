@@ -6,9 +6,9 @@ import { Subscription } from 'rxjs';
 import { FirebaseDataService, SessionData, StudentSummary } from '../../../../../../services/firebase-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { StudentDetailComponent } from '../../../../../../components/student-detail/student-detail.component';
-import {DatePipe, DecimalPipe, NgIf} from '@angular/common';
+import { DatePipe, DecimalPipe, NgIf } from '@angular/common';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import {MatButton, MatIconButton} from '@angular/material/button';
+import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -17,6 +17,24 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
+import { MatTooltip } from '@angular/material/tooltip';
+import {ConsoleService} from "../../../../../../services/console.service";
+import {DataChartComponent} from "../../../../../../components/data-chart/data-chart.component";
+import {
+  ApexNonAxisChartSeries,
+  ApexPlotOptions,
+  ApexChart,
+  ApexFill,
+  ChartComponent,
+  ApexStroke,
+  ApexAxisChartSeries,
+  ApexDataLabels,
+  ApexXAxis,
+  ApexYAxis,
+  ApexTitleSubtitle,
+  ApexMarkers,
+  ApexForecastDataPoints, ApexLegend,
+} from "ng-apexcharts";
 
 interface StudentProgress {
   studentId: string;
@@ -61,7 +79,9 @@ interface ProgressStats {
     MatExpansionModule,
     FormsModule,
     MatIconButton,
-    DecimalPipe
+    DecimalPipe,
+    MatTooltip,
+    DataChartComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -75,6 +95,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoadingResults = true;
   isRateLimitReached = false;
   selectedSession: string = 'all';
+  session0001DataSource = new MatTableDataSource<{ name: string; marks: number }>([]);
+  session0002DataSource = new MatTableDataSource<{ name: string; marks: number }>([]);
+
+  @ViewChild('paginator0001') paginator0001!: MatPaginator;
+  @ViewChild('paginator0002') paginator0002!: MatPaginator;
 
   // Debug properties
   debugInfo = {
@@ -101,6 +126,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   progressDisplayedColumns: string[] = ['studentId', 'session001Status', 'session002Status', 'progressStatus', 'actions'];
   showProgressSection = true;
 
+  // Fixed ViewChild references with proper static configuration
   @ViewChild('progressPaginator', { static: false }) progressPaginator!: MatPaginator;
   @ViewChild('progressSort', { static: false }) progressSort!: MatSort;
 
@@ -112,27 +138,36 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private firebaseDataService: FirebaseDataService,
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private consoleService:ConsoleService
   ) {}
 
   ngOnInit() {
     console.log('Dashboard component initialized');
     this.loadData();
+    this.loadSessionResults();
   }
 
   ngAfterViewInit() {
     console.log('AfterViewInit called');
-    this.setupPaginatorsAndSort();
-    this.setupPaginatorsAndSort();
-    this.setupProgressPaginator();
+    this.session0001DataSource.paginator = this.paginator001;
+    this.session0002DataSource.paginator = this.paginator002;
+    // Initial setup - will be called again when data is loaded
+    this.setupAllPaginatorsAndSorts();
   }
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
   }
 
-  private setupPaginatorsAndSort() {
-    console.log('Setting up paginators and sort');
+  private setupAllPaginatorsAndSorts() {
+    console.log('Setting up all paginators and sorts');
+    this.setupSessionPaginatorsAndSort();
+    this.setupProgressPaginator();
+  }
+
+  private setupSessionPaginatorsAndSort() {
+    console.log('Setting up session paginators and sort');
 
     if (this.paginator001) {
       this.dataSource001.paginator = this.paginator001;
@@ -163,6 +198,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private setupProgressPaginator() {
+    console.log('Setting up progress paginator');
+
+    // Only setup if progress section is visible and elements exist
+    if (this.showProgressSection) {
+      if (this.progressPaginator) {
+        this.progressDataSource.paginator = this.progressPaginator;
+        console.log('Progress Paginator connected');
+      } else {
+        console.log('Progress Paginator not available');
+      }
+
+      if (this.progressSort) {
+        this.progressDataSource.sort = this.progressSort;
+        console.log('Progress Sort connected');
+      } else {
+        console.log('Progress Sort not available');
+      }
+    }
+  }
+
   loadData() {
     console.log('Starting to load data');
     this.isLoadingResults = true;
@@ -178,17 +234,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (completedRequests >= totalRequests) {
         this.isLoadingResults = false;
-        console.log('All data loaded, setting up paginators');
+        console.log('All data loaded, analyzing progress and setting up paginators');
+
+        // Analyze student progress first
+        this.analyzeStudentProgress();
 
         // Force change detection
         this.cdr.detectChanges();
 
-        // Reassign paginators after data is loaded
+        // Setup paginators after data is loaded and DOM is updated
         setTimeout(() => {
-          this.setupPaginatorsAndSort();
-          this.analyzeStudentProgress(); // Add this line
+          this.setupAllPaginatorsAndSorts();
           this.cdr.detectChanges();
-        }, 200);
+        }, 100);
       }
     };
 
@@ -334,11 +392,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-
-
-
-
-
   private analyzeStudentProgress() {
     console.log('Analyzing student progress...');
 
@@ -389,10 +442,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private calculateProgressStatus(session001: StudentSummary, session002: StudentSummary): 'improved' | 'declined' | 'same' {
-    // You can customize this logic based on your StudentSummary properties
-    // For now, I'll assume there's some performance metric to compare
-    // If StudentSummary has attention scores or other metrics, use those
-
     // Placeholder logic - replace with actual comparison metrics
     const session001Score = this.getStudentScore(session001);
     const session002Score = this.getStudentScore(session002);
@@ -408,7 +457,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private getStudentScore(student: StudentSummary): number {
     // Placeholder scoring logic - replace with actual metrics from your StudentSummary
-    // This could be based on attention levels, completion rates, etc.
     return Math.random() * 100; // Replace with actual calculation
   }
 
@@ -429,27 +477,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // Update your existing loadData method's checkAllLoaded function
-  // Replace the existing checkAllLoaded function with this:
-
-
-  // Add this method to setup progress paginator
-  private setupProgressPaginator() {
-    if (this.progressPaginator) {
-      this.progressDataSource.paginator = this.progressPaginator;
-    }
-    if (this.progressSort) {
-      this.progressDataSource.sort = this.progressSort;
-    }
-  }
-
-  // Add methods for progress section
   toggleProgressSection() {
     this.showProgressSection = !this.showProgressSection;
+    this.cdr.detectChanges();
+
     if (this.showProgressSection) {
+      // Give Angular time to render the elements before setting up pagination
       setTimeout(() => {
         this.setupProgressPaginator();
-      }, 100);
+        this.cdr.detectChanges();
+      }, 200);
     }
   }
 
@@ -498,7 +535,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   openProgressDialog(studentId: string): void {
     const student = this.studentProgressData.find(s => s.studentId === studentId);
     if (student) {
-      // You can create a specific progress dialog or use existing one
       const dialogRef = this.dialog.open(StudentDetailComponent, {
         minWidth: '95vw',
         data: {
@@ -512,5 +548,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log('Progress dialog was closed');
       });
     }
+  }
+
+
+
+  loadSessionResults() {
+    this.consoleService.getResultsBySession("001").subscribe(results => {
+      console.log(results)
+      this.session0001DataSource.data = results;
+    });
+
+    this.consoleService.getResultsBySession("002").subscribe(results => {
+      console.log(results)
+      this.session0002DataSource.data = results;
+    });
+
+    this.consoleService.getAllResults().subscribe(r=>{
+      console.log(r)
+    })
   }
 }
