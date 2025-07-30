@@ -19,6 +19,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
 import {ConsoleService} from "../../../../../../services/console.service";
+import {DataChartComponent} from "../../../../../../components/data-chart/data-chart.component";
 
 interface StudentProgress {
   studentId: string;
@@ -64,7 +65,8 @@ interface ProgressStats {
     FormsModule,
     MatIconButton,
     DecimalPipe,
-    MatTooltip
+    MatTooltip,
+    DataChartComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -545,5 +547,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log(results)
       this.session0002DataSource.data = results;
     });
+
+    this.consoleService.getAllResults().subscribe(r=>{
+      console.log(r)
+    })
   }
 }

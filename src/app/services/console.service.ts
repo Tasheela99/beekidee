@@ -30,6 +30,17 @@ export interface Lesson {
   createdAt: string;
 }
 
+interface GameSession {
+  marks: number;
+  timestamp: any; // Can be Firestore Timestamp or Date
+}
+
+interface StudentDocument {
+  gameSessions?: {
+    [sessionId: string]: GameSession;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -288,6 +299,25 @@ export class ConsoleService {
       }),
       catchError(error => {
         console.error('Firestore Error:', error);
+        return of([]);
+      })
+    );
+  }
+
+  getAllResults(): Observable<any[]> {
+    const sessionsQuery = collectionGroup(this.firestore, 'sessions');
+
+    return from(getDocs(sessionsQuery)).pipe(
+      map(snapshot => {
+        return snapshot.docs.map(sessionDoc => ({
+          studentName: sessionDoc.ref.parent.parent?.id,
+          sessionId: sessionDoc.id,
+          marks: sessionDoc.data()['marks'],
+          timestamp: sessionDoc.data()['timestamp']?.toDate?.() || null
+        }));
+      }),
+      catchError(error => {
+        console.error('Error fetching all results:', error);
         return of([]);
       })
     );
