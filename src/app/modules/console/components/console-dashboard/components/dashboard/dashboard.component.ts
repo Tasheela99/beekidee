@@ -18,8 +18,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { FormsModule } from '@angular/forms';
 import { MatTooltip } from '@angular/material/tooltip';
-import {ConsoleService} from "../../../../../../services/console.service";
-import {DataChartComponent} from "../../../../../../components/data-chart/data-chart.component";
+import { ConsoleService } from "../../../../../../services/console.service";
+import { DataChartComponent } from "../../../../../../components/data-chart/data-chart.component";
 import {
   ApexNonAxisChartSeries,
   ApexPlotOptions,
@@ -95,9 +95,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoadingResults = true;
   isRateLimitReached = false;
   selectedSession: string = 'all';
+
+  // Session results tables (names + marks)
   session0001DataSource = new MatTableDataSource<{ name: string; marks: number }>([]);
   session0002DataSource = new MatTableDataSource<{ name: string; marks: number }>([]);
 
+  // Paginators for session results tables
   @ViewChild('paginator0001') paginator0001!: MatPaginator;
   @ViewChild('paginator0002') paginator0002!: MatPaginator;
 
@@ -126,10 +129,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   progressDisplayedColumns: string[] = ['studentId', 'session001Status', 'session002Status', 'progressStatus', 'actions'];
   showProgressSection = true;
 
-  // Fixed ViewChild references with proper static configuration
+  // Progress table controls
   @ViewChild('progressPaginator', { static: false }) progressPaginator!: MatPaginator;
   @ViewChild('progressSort', { static: false }) progressSort!: MatSort;
 
+  // Unique-students tables controls
   @ViewChild('paginator001', { static: false }) paginator001!: MatPaginator;
   @ViewChild('sort001', { static: false }) sort001!: MatSort;
   @ViewChild('paginator002', { static: false }) paginator002!: MatPaginator;
@@ -139,7 +143,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private firebaseDataService: FirebaseDataService,
     public dialog: MatDialog,
     private cdr: ChangeDetectorRef,
-    private consoleService:ConsoleService
+    private consoleService: ConsoleService
   ) {}
 
   ngOnInit() {
@@ -150,9 +154,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     console.log('AfterViewInit called');
-    this.session0001DataSource.paginator = this.paginator001;
-    this.session0002DataSource.paginator = this.paginator002;
-    // Initial setup - will be called again when data is loaded
+
+    // ✅ Wire paginators for the *session results* tables (0001/0002)
+    // (ensure these are set once view is ready)
+    if (this.paginator0001) this.session0001DataSource.paginator = this.paginator0001;
+    if (this.paginator0002) this.session0002DataSource.paginator = this.paginator0002;
+
+    // ✅ Set up other paginators/sorts (unique-students + progress)
     this.setupAllPaginatorsAndSorts();
   }
 
@@ -166,6 +174,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.setupProgressPaginator();
   }
 
+  // Unique-students tables (001/002)
   private setupSessionPaginatorsAndSort() {
     console.log('Setting up session paginators and sort');
 
@@ -198,24 +207,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Progress table
   private setupProgressPaginator() {
     console.log('Setting up progress paginator');
+    if (!this.showProgressSection) return;
 
-    // Only setup if progress section is visible and elements exist
-    if (this.showProgressSection) {
-      if (this.progressPaginator) {
-        this.progressDataSource.paginator = this.progressPaginator;
-        console.log('Progress Paginator connected');
-      } else {
-        console.log('Progress Paginator not available');
-      }
+    if (this.progressPaginator) {
+      this.progressDataSource.paginator = this.progressPaginator;
+      console.log('Progress Paginator connected');
+    } else {
+      console.log('Progress Paginator not available');
+    }
 
-      if (this.progressSort) {
-        this.progressDataSource.sort = this.progressSort;
-        console.log('Progress Sort connected');
-      } else {
-        console.log('Progress Sort not available');
-      }
+    if (this.progressSort) {
+      this.progressDataSource.sort = this.progressSort;
+      console.log('Progress Sort connected');
+    } else {
+      console.log('Progress Sort not available');
     }
   }
 
@@ -250,7 +258,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     };
 
-    // Load Session 001 data
+    // Load Session 001 data (unique students)
     console.log('Subscribing to session 001 data');
     const sub001 = this.firebaseDataService.getUniqueStudentsBySession(1).subscribe({
       next: (data: StudentSummary[]) => {
@@ -279,7 +287,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Load Session 002 data
+    // Load Session 002 data (unique students)
     console.log('Subscribing to session 002 data');
     const sub002 = this.firebaseDataService.getUniqueStudentsBySession(2).subscribe({
       next: (data: StudentSummary[]) => {
@@ -317,34 +325,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource001.filter = filterValue.trim().toLowerCase();
     this.dataSource002.filter = filterValue.trim().toLowerCase();
 
-    if (this.dataSource001.paginator) {
-      this.dataSource001.paginator.firstPage();
-    }
-    if (this.dataSource002.paginator) {
-      this.dataSource002.paginator.firstPage();
-    }
+    if (this.dataSource001.paginator) this.dataSource001.paginator.firstPage();
+    if (this.dataSource002.paginator) this.dataSource002.paginator.firstPage();
   }
 
   filterBySession() {
     this.cdr.detectChanges();
-    if (this.dataSource001.paginator) {
-      this.dataSource001.paginator.firstPage();
-    }
-    if (this.dataSource002.paginator) {
-      this.dataSource002.paginator.firstPage();
-    }
+    if (this.dataSource001.paginator) this.dataSource001.paginator.firstPage();
+    if (this.dataSource002.paginator) this.dataSource002.paginator.firstPage();
   }
 
   clearFilters() {
     this.selectedSession = 'all';
     this.dataSource001.filter = '';
     this.dataSource002.filter = '';
-    if (this.dataSource001.paginator) {
-      this.dataSource001.paginator.firstPage();
-    }
-    if (this.dataSource002.paginator) {
-      this.dataSource002.paginator.firstPage();
-    }
+    if (this.dataSource001.paginator) this.dataSource001.paginator.firstPage();
+    if (this.dataSource002.paginator) this.dataSource002.paginator.firstPage();
     this.cdr.detectChanges();
   }
 
@@ -387,7 +383,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       data: { studentId, sessionNumber }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
       console.log('The dialog was closed');
     });
   }
@@ -395,10 +391,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private analyzeStudentProgress() {
     console.log('Analyzing student progress...');
 
-    // Create a map of all unique students
     const studentMap = new Map<string, StudentProgress>();
 
-    // Process Session 001 students
+    // Session 001 students
     this.dataSource001.data.forEach(student => {
       if (!studentMap.has(student.studentId)) {
         studentMap.set(student.studentId, {
@@ -412,7 +407,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    // Process Session 002 students
+    // Session 002 students
     this.dataSource002.data.forEach(student => {
       if (studentMap.has(student.studentId)) {
         const existing = studentMap.get(student.studentId)!;
@@ -435,9 +430,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.studentProgressData = Array.from(studentMap.values());
     this.progressDataSource.data = this.studentProgressData;
 
-    // Calculate statistics
     this.calculateProgressStats();
-
     console.log('Progress analysis complete:', this.progressStats);
   }
 
@@ -446,18 +439,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const session001Score = this.getStudentScore(session001);
     const session002Score = this.getStudentScore(session002);
 
-    if (session002Score > session001Score) {
-      return 'improved';
-    } else if (session002Score < session001Score) {
-      return 'declined';
-    } else {
-      return 'same';
-    }
+    if (session002Score > session001Score) return 'improved';
+    if (session002Score < session001Score) return 'declined';
+    return 'same';
   }
 
   private getStudentScore(student: StudentSummary): number {
-    // Placeholder scoring logic - replace with actual metrics from your StudentSummary
-    return Math.random() * 100; // Replace with actual calculation
+    // TODO: replace with your real scoring logic
+    return Math.random() * 100;
   }
 
   private calculateProgressStats() {
@@ -470,7 +459,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     stats.declinedStudents = this.studentProgressData.filter(s => s.progressStatus === 'declined').length;
     stats.samePerformance = this.studentProgressData.filter(s => s.progressStatus === 'same').length;
 
-    // Calculate average progress rate
     const studentsWithBothSessions = this.studentProgressData.filter(s => s.hasBothSessions);
     if (studentsWithBothSessions.length > 0) {
       stats.averageProgressRate = (stats.improvedStudents / studentsWithBothSessions.length) * 100;
@@ -482,7 +470,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cdr.detectChanges();
 
     if (this.showProgressSection) {
-      // Give Angular time to render the elements before setting up pagination
       setTimeout(() => {
         this.setupProgressPaginator();
         this.cdr.detectChanges();
@@ -526,10 +513,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   applyProgressFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.progressDataSource.filter = filterValue.trim().toLowerCase();
-
-    if (this.progressDataSource.paginator) {
-      this.progressDataSource.paginator.firstPage();
-    }
+    if (this.progressDataSource.paginator) this.progressDataSource.paginator.firstPage();
   }
 
   openProgressDialog(studentId: string): void {
@@ -544,27 +528,50 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
 
-      dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe(() => {
         console.log('Progress dialog was closed');
       });
     }
   }
 
-
-
+  // ---------- Session Results (0001 / 0002) ----------
   loadSessionResults() {
     this.consoleService.getResultsBySession("001").subscribe(results => {
-      console.log(results)
+      console.log(results);
       this.session0001DataSource.data = results;
+
+      // ensure paginator is attached after async update
+      Promise.resolve().then(() => {
+        if (this.paginator0001) this.session0001DataSource.paginator = this.paginator0001;
+      });
     });
 
     this.consoleService.getResultsBySession("002").subscribe(results => {
-      console.log(results)
+      console.log(results);
       this.session0002DataSource.data = results;
+
+      Promise.resolve().then(() => {
+        if (this.paginator0002) this.session0002DataSource.paginator = this.paginator0002;
+      });
     });
 
-    this.consoleService.getAllResults().subscribe(r=>{
-      console.log(r)
-    })
+    this.consoleService.getAllResults().subscribe(r => {
+      console.log(r);
+    });
+  }
+
+  downloadResultsJson(): void {
+    this.consoleService.getAllResults().subscribe(results => {
+      const jsonData = JSON.stringify(results, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'all-results.json';
+      a.click();
+
+      URL.revokeObjectURL(url);
+    });
   }
 }

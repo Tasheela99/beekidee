@@ -49,29 +49,28 @@ export class StudentNamePopupComponent {
 
       const intervalId = setInterval(() => {
         this.attentionService.getStudentAttentionLevel(studentName).subscribe((response: any) => {
+          console.log(response)
           const overallData = response?.data.overall ?? [];
 
           if (overallData.length > 0) {
             const currentOverallAttention = overallData[intervalIndex];
             console.log(`Overall Attention: ${currentOverallAttention}`);
-
-            // Check if we are on the specific route
             if (this.router.url === '/console/admin/dashboard/constructivism-plus-attention/pre-intermediate') {
               if (currentOverallAttention < 65 && !this.isDialogOpen) {
                 console.log("You lost your attention");
-                this.openDialog();  // Open the dialog if route matches
+                this.openDialog();
               }
 
               if (currentOverallAttention >= 65 && this.isDialogOpen) {
                 console.log("Your attention is back");
-                this.closeDialog();  // Close the dialog if route matches
+                this.closeDialog();
               }
             }
 
             intervalIndex++;
 
             if (intervalIndex >= overallData.length) {
-              clearInterval(intervalId);  // Stop the interval when all data is processed
+              clearInterval(intervalId);
             }
           } else {
             console.error("No overall data found or array is empty.");
