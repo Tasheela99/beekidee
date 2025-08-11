@@ -335,47 +335,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.dataSource002.paginator) this.dataSource002.paginator.firstPage();
   }
 
-  clearFilters() {
-    this.selectedSession = 'all';
-    this.dataSource001.filter = '';
-    this.dataSource002.filter = '';
-    if (this.dataSource001.paginator) this.dataSource001.paginator.firstPage();
-    if (this.dataSource002.paginator) this.dataSource002.paginator.firstPage();
-    this.cdr.detectChanges();
-  }
-
-  exportData() {
-    const data = [
-      ...this.dataSource001.data.map(item => ({ ...item, session: '001' })),
-      ...this.dataSource002.data.map(item => ({ ...item, session: '002' }))
-    ];
-
-    const csv = [
-      'Student ID,Session Number',
-      ...data.map(item => `${item.studentId},${item.sessionNumber}`)
-    ].join('\n');
-
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'student_sessions.csv';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  }
-
-  refreshData() {
-    console.log('Manual refresh triggered');
-    this.loadData();
-  }
-
-  formatTimestamp(timestamp: number): Date {
-    return new Date(timestamp * 1000);
-  }
-
-  formatAttention(value: number): string {
-    return `${value.toFixed(1)}%`;
-  }
 
   openDialog(studentId: string, sessionNumber: number): void {
     const dialogRef = this.dialog.open(StudentDetailComponent, {
@@ -487,18 +446,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       default: return 'help_outline';
     }
   }
-
-  getProgressStatusColor(status: string): string {
-    switch (status) {
-      case 'improved': return 'success';
-      case 'declined': return 'warn';
-      case 'same': return 'accent';
-      case 'new': return 'primary';
-      case 'incomplete': return '';
-      default: return '';
-    }
-  }
-
   getProgressStatusText(status: string): string {
     switch (status) {
       case 'improved': return 'Improved';

@@ -307,15 +307,6 @@ export class IntermediateLevelComponent {
     return shuffled;
   }
 
-  get currentTotalMarks(): number {
-    return this.totalMarks;
-  }
-
-  get maxPossibleMarks(): number {
-    return this.dataList.length * this.maxMarksPerQuestion;
-  }
-
-
   openSaveResultDialog(): void {
     const dialogRef = this.dialog.open(SaveResultsPopUpComponent);
 
