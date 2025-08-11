@@ -1,18 +1,12 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AttentionService } from "../../services/attention.service";
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { AttentionLostPopupComponent } from "../attention-lost-popup/attention-lost-popup.component";
 import { Router } from '@angular/router';
-
-interface AttentionData {
-  student_id: string;
-  interval_data: {
-    interval_start: number;
-    overall_attention: number;
-  }[];
-}
+import { Auth } from '@angular/fire/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 
 @Component({
   selector: 'app-student-name-popup',
@@ -21,7 +15,7 @@ interface AttentionData {
   templateUrl: './student-name-popup.component.html',
   styleUrls: ['./student-name-popup.component.scss']
 })
-export class StudentNamePopupComponent {
+export class StudentNamePopupComponent implements OnInit {
   @Input() isVisible: boolean = false;
   @Output() onSubmit = new EventEmitter<{ name: string, round: number }>();
   @Output() onCancel = new EventEmitter<void>();
@@ -31,54 +25,69 @@ export class StudentNamePopupComponent {
   data = inject(MAT_DIALOG_DATA);
 
   private attentionService = inject(AttentionService);
-  private router = inject(Router);  // Inject Router service
+  private router = inject(Router);
+  private dialog = inject(MatDialog);
+  private auth = inject(Auth);
 
+  // We now only need roundNumber in the form
   popupForm = new FormGroup({
-    studentName: new FormControl(),
     roundNumber: new FormControl(),
   });
-  private dialog = inject(MatDialog);
+
+  // Hold the Firebase UID
+  private userUid: string | null = null;
+
+  ngOnInit(): void {
+    // Watch auth state and grab the UID
+    onAuthStateChanged(this.auth, (user) => {
+      this.userUid = user?.uid ?? null;
+    });
+  }
 
   submitDetails(): void {
+    // Ensure we have a UID before proceeding
+    if (!this.userUid) {
+      console.error('No logged-in user UID found.');
+      return;
+    }
+
+    const roundNumber = this.popupForm.get('roundNumber')?.value;
+
     this.attentionService.trackAttention(
-      this.popupForm.get('studentName')?.value,
-      this.popupForm.get('roundNumber')?.value,
-    ).subscribe(response => {
-      const studentName = this.popupForm.get('studentName')?.value;
-      let intervalIndex = 0;
+      this.userUid,
+      roundNumber
+    ).subscribe(() => {
 
       const intervalId = setInterval(() => {
-        this.attentionService.getStudentAttentionLevel(studentName).subscribe((response: any) => {
-          const overallData = response?.data.overall ?? [];
+        this.attentionService.getStudentAttentionLevel(this.userUid)
+          .subscribe((response: any) => {
+            console.log('Raw response:', response);
 
-          if (overallData.length > 0) {
-            const currentOverallAttention = overallData[intervalIndex];
-            console.log(`Overall Attention: ${currentOverallAttention}`);
+            // If the backend returns an array of objects [{ overall: 59.07 }]
+            const overallValue = Array.isArray(response) && response.length > 0
+              ? response[0]?.overall
+              : null;
 
-            // Check if we are on the specific route
-            if (this.router.url === '/console/admin/dashboard/constructivism-plus-attention/pre-intermediate') {
-              if (currentOverallAttention < 65 && !this.isDialogOpen) {
-                console.log("You lost your attention");
-                this.openDialog();  // Open the dialog if route matches
+            console.log('Current Overall Attention:', overallValue);
+
+            if (overallValue !== null) {
+              if (
+                this.router.url === '/console/admin/dashboard/constructivism-plus-attention/pre-intermediate'
+              ) {
+                if (overallValue < 65 && !this.isDialogOpen) {
+                  this.openDialog();
+                }
+                if (overallValue >= 65 && this.isDialogOpen) {
+                  this.closeDialog();
+                }
               }
-
-              if (currentOverallAttention >= 65 && this.isDialogOpen) {
-                console.log("Your attention is back");
-                this.closeDialog();  // Close the dialog if route matches
-              }
+            } else {
+              console.error("No overall value found.");
+              clearInterval(intervalId);
             }
+          });
+      }, 10000); // 10-second interval
 
-            intervalIndex++;
-
-            if (intervalIndex >= overallData.length) {
-              clearInterval(intervalId);  // Stop the interval when all data is processed
-            }
-          } else {
-            console.error("No overall data found or array is empty.");
-            clearInterval(intervalId);
-          }
-        });
-      }, 10000);
       this.dialogRef.close();
     });
   }
@@ -91,7 +100,7 @@ export class StudentNamePopupComponent {
 
   // Close the dialog and set the dialog open state to false
   closeDialog(): void {
-    this.dialog.closeAll();  // Close all open dialogs
+    this.dialog.closeAll();
     this.isDialogOpen = false;
   }
 
@@ -99,6 +108,7 @@ export class StudentNamePopupComponent {
     this.dialogRef.close();
   }
 
+  // Kept for parity; not used now because there’s no text field.
   onKeyPress(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       this.submitDetails();
