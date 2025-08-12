@@ -22,18 +22,6 @@ import { ConsoleService } from "../../../../../../services/console.service";
     CdkDrag,
     NgForOf,
     NgIf,
-    MatButton,
-    YouTubePlayer,
-    MatInput,
-    MatFormField,
-    MatLabel,
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelTitle,
-    MatExpansionPanelHeader,
-    NgClass,
-    CdkDropListGroup,
-    DraggableCameraComponent,
     MatCard,
     MatCardHeader,
     MatCardContent,
@@ -61,7 +49,6 @@ export class ConstructivismComponent implements OnInit {
   counter = 0;
   isStarted = false;
   isAnswerCorrect = false;
-  showCamera = true;
   lessons: any[] = [];
   selectedLesson: any | null = null;
 
@@ -103,25 +90,6 @@ export class ConstructivismComponent implements OnInit {
   selectLesson(lesson: any): void {
     this.selectedLesson = lesson;
   }
-
-  toggleCameraVisibility() {
-    this.showCamera = !this.showCamera;
-  }
-
-  drop(event: CdkDragDrop<string[]>) {
-    if (event.previousContainer === event.container) {
-      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
-    }
-    this.checkAnswer();
-  }
-
   checkAnswer() {
     for (let i = 0; i < this.basket.length; i++) {
       if (this.basket[i] === this.searchItem) {
@@ -217,12 +185,5 @@ export class ConstructivismComponent implements OnInit {
         searchItem: '50'
       },
     ];
-  }
-
-  extractVideoId(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    const url = inputElement?.value || '';
-    const videoIdMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/);
-    this.videoId = videoIdMatch ? videoIdMatch[1] : '';
   }
 }

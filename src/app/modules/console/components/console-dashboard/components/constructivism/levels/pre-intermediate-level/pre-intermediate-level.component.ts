@@ -48,10 +48,6 @@ export class PreIntermediateLevelComponent {
     });
   }
 
-  toggleCameraVisibility() {
-    this.showCamera = !this.showCamera;
-  }
-
   drop(event: CdkDragDrop<string[]>) {
     console.log('Drop event triggered', event);
 
@@ -289,14 +285,6 @@ export class PreIntermediateLevelComponent {
       outerDiv.classList.remove('started');
     }
   }
-
-  extractVideoId(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    const url = inputElement?.value || '';
-    const videoIdMatch = url.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&]+)/);
-    this.videoId = videoIdMatch ? videoIdMatch[1] : '';
-  }
-
   private shuffleArray(array: string[]): string[] {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -306,21 +294,6 @@ export class PreIntermediateLevelComponent {
     return shuffled;
   }
 
-  get selectedAnswer(): string | null {
-    return this.basket.length === 1 ? this.basket[0] : null;
-  }
-
-  get hasSelectedAnswer(): boolean {
-    return this.basket.length === 1;
-  }
-
-  get currentTotalMarks(): number {
-    return this.totalMarks;
-  }
-
-  get maxPossibleMarks(): number {
-    return this.dataList.length * this.maxMarksPerQuestion;
-  }
 
   getTreeCount(): number {
     if (this.counter === 0) return 3;
