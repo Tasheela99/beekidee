@@ -1,12 +1,10 @@
-import { Component, EventEmitter, inject, Input, Output, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { AttentionService } from "../../services/attention.service";
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { AttentionLostPopupComponent } from "../attention-lost-popup/attention-lost-popup.component";
 import { Router } from '@angular/router';
-import { Auth } from '@angular/fire/auth';
-import { onAuthStateChanged } from 'firebase/auth';
+import { AttentionService } from "../../services/attention.service";
+import { AttentionLostPopupComponent } from "../attention-lost-popup/attention-lost-popup.component";
 
 @Component({
   selector: 'app-student-name-popup',
@@ -24,42 +22,37 @@ export class StudentNamePopupComponent implements OnInit {
   readonly dialogRef = inject(MatDialogRef<StudentNamePopupComponent>);
   data = inject(MAT_DIALOG_DATA);
 
-  private attentionService = inject(AttentionService);
-  private router = inject(Router);
-  private dialog = inject(MatDialog);
-  private auth = inject(Auth);
+  private readonly attentionService = inject(AttentionService);
+  private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
-  // We now only need roundNumber in the form
+  // Form now includes both studentName and roundNumber
   popupForm = new FormGroup({
+    studentName: new FormControl(),
     roundNumber: new FormControl(),
   });
 
-  // Hold the Firebase UID
-  private userUid: string | null = null;
-
   ngOnInit(): void {
-    // Watch auth state and grab the UID
-    onAuthStateChanged(this.auth, (user) => {
-      this.userUid = user?.uid ?? null;
-    });
+    // No longer need to watch auth state for UID
   }
 
   submitDetails(): void {
-    // Ensure we have a UID before proceeding
-    if (!this.userUid) {
-      console.error('No logged-in user UID found.');
+    const studentName = this.popupForm.get('studentName')?.value;
+    const roundNumber = this.popupForm.get('roundNumber')?.value;
+
+    // Ensure we have a student name before proceeding
+    if (!studentName) {
+      console.error('No student name provided.');
       return;
     }
 
-    const roundNumber = this.popupForm.get('roundNumber')?.value;
-
     this.attentionService.trackAttention(
-      this.userUid,
+      studentName,
       roundNumber
     ).subscribe(() => {
 
       const intervalId = setInterval(() => {
-        this.attentionService.getStudentAttentionLevel(this.userUid)
+        this.attentionService.getStudentAttentionLevel(studentName)
           .subscribe((response: any) => {
             console.log('Raw response:', response);
 

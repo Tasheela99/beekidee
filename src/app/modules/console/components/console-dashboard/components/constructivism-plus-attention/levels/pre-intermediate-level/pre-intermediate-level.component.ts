@@ -12,6 +12,11 @@ import {NgClass, NgIf, CommonModule} from "@angular/common";
 import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import {AnimationDialogComponent} from "../../../../../../../../components/animation-dialog/animation-dialog.component";
+import {MatButton} from "@angular/material/button";
+import {
+  SaveResultsPopUpComponent
+} from "../../../../../../../../components/save-results-pop-up/save-results-pop-up.component";
+import {ConsoleService} from "../../../../../../../../services/console.service";
 
 @Component({
   selector: 'app-pre-intermediate-level',
@@ -22,7 +27,8 @@ import {AnimationDialogComponent} from "../../../../../../../../components/anima
     NgIf,
     NgClass,
     CdkDropListGroup,
-    CommonModule
+    CommonModule,
+    MatButton
   ],
   templateUrl: './pre-intermediate-level.component.html',
   styleUrl: './pre-intermediate-level.component.scss'
@@ -46,6 +52,7 @@ export class PreIntermediateLevelComponent {
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
+  private consoleService = inject(ConsoleService);
 
   constructor() {
     this.currentUser$ = user(this.auth);
@@ -322,5 +329,18 @@ export class PreIntermediateLevelComponent {
 
   getTreeArray(): number[] {
     return Array(this.getTreeCount()).fill(0).map((_, index) => index);
+  }
+
+  openSaveResultDialog() {
+    const dialogRef = this.dialog.open(SaveResultsPopUpComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.consoleService.saveResults(result).subscribe({
+          next: () => alert('Result saved!'),
+          error: err => alert('Error saving result: ' + err)
+        });
+      }
+    });
   }
 }

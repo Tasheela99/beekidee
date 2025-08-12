@@ -14,8 +14,8 @@ import {NgIf} from "@angular/common";
 import {Auth} from "@angular/fire/auth";
 import {KidsService} from "../../../services/kids.service";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
 import {doc, getDoc} from "@angular/fire/firestore";
 
 @Component({
@@ -77,7 +77,7 @@ export class SignInComponent {
       this.isLoading = true;
 
       this.authService.signIn(email, password)
-        .then(({ userCredential, isAdmin }) => {
+        .then(({userCredential, isAdmin}) => {
           console.log('Login successful!', userCredential);
 
           this.snackBar.open('Login successful!', 'Close', {
@@ -94,12 +94,7 @@ export class SignInComponent {
               // For regular users, check if they have kids registered
               this.kidsService.getKidsByParentEmail(email).subscribe({
                 next: (kids) => {
-                  console.log('Kids data:', kids);
-                  if (kids && kids.length > 0) {
-                    this.router.navigateByUrl('/kids');
-                  } else {
-                    this.router.navigateByUrl('/security/kids-details');
-                  }
+                  this.router.navigateByUrl('/kids');
                   this.isLoading = false;
                 },
                 error: (error) => {

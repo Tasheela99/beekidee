@@ -13,6 +13,11 @@ import {NgClass, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
+import {MatButton} from "@angular/material/button";
+import {
+  SaveResultsPopUpComponent
+} from "../../../../../../../../components/save-results-pop-up/save-results-pop-up.component";
+import {ConsoleService} from "../../../../../../../../services/console.service";
 
 @Component({
   selector: 'app-medium-level',
@@ -23,7 +28,9 @@ import { Observable } from 'rxjs';
     NgIf,
     NgClass,
     FormsModule,
-    CdkDropListGroup // Added missing import
+    CdkDropListGroup,
+    MatButton,
+    // Added missing import
   ],
   templateUrl: './intermediate-level.component.html',
   styleUrl: './intermediate-level.component.scss'
@@ -46,6 +53,7 @@ export class IntermediateLevelComponent {
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
+  private consoleService = inject(ConsoleService);
 
    constructor() {
     this.currentUser$ = user(this.auth);
@@ -265,5 +273,18 @@ export class IntermediateLevelComponent {
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+  }
+
+  openSaveResultDialog() {
+    const dialogRef = this.dialog.open(SaveResultsPopUpComponent);
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.consoleService.saveResults(result).subscribe({
+          next: () => alert('Result saved!'),
+          error: err => alert('Error saving result: ' + err)
+        });
+      }
+    });
   }
 }
