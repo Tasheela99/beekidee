@@ -19,7 +19,7 @@
 
         <!-- Header -->
         <div class="header justify-content-center" *ngIf="isStarted && counter < dataList.length">
-          <h1>සොයන්න සහ ගනින්න:- {{ searchItem }} අකුරු කීයද ?</h1>
+          <h1>🔍 සොයන්න සහ ගනින්න:- {{ searchItem }} අකුරු කීයද ? 🎯</h1>
         </div>
 
         <!-- Image -->
@@ -30,7 +30,7 @@
         <!-- Game Content with Drag & Drop -->
         <div class="container-wrapper" *ngIf="isStarted && counter < dataList.length" cdkDropListGroup>
           <div class="example-container2">
-            <h2>පිළිතුරු කොටුව</h2>
+            <h2>🎯 පිළිතුරු කොටුව</h2>
             <div class="answer-card">
               <div
                 cdkDropList
@@ -50,7 +50,7 @@
             </div>
           </div>
           <div class="example-container">
-            <h2>ඔබේ පිළිතුර</h2>
+            <h2>🎁 ඔබේ පිළිතුර</h2>
             <div class="answer-card">
               <div
                 cdkDropList
@@ -66,7 +66,7 @@
                   </div>
                 }
                 <div *ngIf="basket.length === 0" class="drop-placeholder">
-                  ඔබේ පිළිතුර මෙතනට ඇදලා දාන්න.
+                  🎨 ඔබේ පිළිතුර මෙතනට ඇදලා දාන්න 🌟
                 </div>
               </div>
             </div>
@@ -76,18 +76,18 @@
         <!-- Start Button -->
         <div class="buttons justify-content-center" *ngIf="!isStarted">
           <button class="start-btn" (click)="start()">
-            <span>▶</span> සෙල්ලම් කරමු.
+            <span>🚀</span> සෙල්ලම් කරමු!
           </button>
         </div>
 
         <!-- Footer Buttons -->
         <div class="footer" *ngIf="isStarted">
-          <div class="d-flex align-items-center justify-content-center p-4 gap-2">
+          <div class="d-flex align-items-center justify-content-center p-4 gap-3">
             <button class="next" *ngIf="counter < dataList.length - 1" (click)="moveToNext()">
-              <span>→</span> ඊළඟ ක්‍රියාකාරකම
+              <span>➡️</span> ඊළඟ ක්‍රියාකාරකම
             </button>
             <button class="reset" (click)="reStartGame()">
-              <span>⟳</span> නැවත පටන් ගමු.
+              <span>🔄</span> නැවත පටන් ගමු
             </button>
             <button class="finish" (click)="finishGame()">
               <span>🏁</span> ක්‍රීඩාව අවසන් කරන්න
@@ -99,6 +99,10 @@
     </div>
   </div>
   <div class="row mt-5">
-    <button mat-stroked-button class="bg-primary text-white" (click)="openSaveResultDialog()">Save Results</button>
+    <div class="col-12 text-center">
+      <button mat-stroked-button class="bg-primary text-white" (click)="openSaveResultDialog()">
+        💾 Save Results
+      </button>
+    </div>
   </div>
 </div>
