@@ -1,49 +1,61 @@
-import { Component, inject } from '@angular/core';
-import { MatDialog } from "@angular/material/dialog";
-import { CdkDrag, CdkDragDrop, CdkDropList, CdkDropListGroup, moveItemInArray, transferArrayItem } from "@angular/cdk/drag-drop";
-import { NgClass, NgIf, CommonModule } from "@angular/common";
-import { Auth, user } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
-import { AnimationDialogComponent } from "../../../../../../../../components/animation-dialog/animation-dialog.component";
-import { ConsoleService } from '../../../../../../../../services/console.service';
+import {Component, inject} from '@angular/core';
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray,
+  transferArrayItem
+} from "@angular/cdk/drag-drop";
 import {MatButton} from "@angular/material/button";
+import {NgClass, NgIf} from "@angular/common";
+import {Observable} from "rxjs";
+import {MatDialog} from "@angular/material/dialog";
+import {Auth, user} from "@angular/fire/auth";
+import {ConsoleService} from "../../../../../../../services/console.service";
+import {ErrorDialogComponent} from "../../../../../../../components/error-dialog/error-dialog.component";
+import {AnimationDialogComponent} from "../../../../../../../components/animation-dialog/animation-dialog.component";
 import {
   SaveResultsPopUpComponent
-} from "../../../../../../../../components/save-results-pop-up/save-results-pop-up.component";
+} from "../../../../../../../components/save-results-pop-up/save-results-pop-up.component";
+import {FormsModule} from "@angular/forms";
 
 @Component({
-  selector: 'app-pre-intermediate-level',
+  selector: 'app-constructivism-task',
   standalone: true,
-  imports: [
-    CdkDropList,
-    CdkDrag,
-    NgIf,
-    CdkDropListGroup,
-    CommonModule,
-    MatButton
-  ],
-  templateUrl: './pre-intermediate-level.component.html',
-  styleUrl: './pre-intermediate-level.component.scss'
+    imports: [
+      CdkDropList,
+      CdkDrag,
+      NgIf,
+      NgClass,
+      FormsModule,
+      CdkDropListGroup,
+      MatButton
+    ],
+  templateUrl: './constructivism-task.component.html',
+  styleUrl: './constructivism-task.component.scss'
 })
-export class PreIntermediateLevelComponent {
+export class ConstructivismTaskComponent {
+
   items: string[] = [];
-  videoId: string = '';
   basket: string[] = [];
   searchItem = '';
   itemFound = false;
   counter = 0;
   isStarted = false;
   isAnswerCorrect = false;
-  showCamera = true;
+  errorMessage: string = '';
   totalMarks = 0;
   maxMarksPerQuestion = 10;
   currentUser$: Observable<any>;
   userUid: string | null = null;
-  gameStartTime: string | null = null; // Added to track game start time
+  gameStartTime: string | null = null;
 
   dialog = inject(MatDialog);
   private auth = inject(Auth);
-  private consoleService = inject(ConsoleService); // Inject ConsoleService
+  private consoleService = inject(ConsoleService);
+
+  wrongAnswerCount: number = 0;
 
   constructor() {
     this.currentUser$ = user(this.auth);
@@ -53,30 +65,40 @@ export class PreIntermediateLevelComponent {
     });
   }
 
-  drop(event: CdkDragDrop<string[]>) {
-    console.log('Drop event triggered', event);
+  dataList: any = [
+    {
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
+      searchItem: 'A',
+      correctCount: 7
+    },
+    {
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
+      searchItem: 'B',
+      correctCount: 5
+    },
+    {
+      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/medium1.png?alt=media&token=24c8b829-1cd7-488c-9c63-0df1105a1c20',
+      searchItem: 'C',
+      correctCount: 4
+    },
+  ];
 
+  drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     } else {
+      const itemBeingMoved = event.previousContainer.data[event.previousIndex];
       if (event.container.data === this.basket) {
         if (this.basket.length > 0) {
           this.items.push(...this.basket);
-          this.basket = [];
         }
-
+        this.basket = [];
         transferArrayItem(
           event.previousContainer.data,
           this.basket,
           event.previousIndex,
           0
         );
-
-        if (this.basket.length > 1) {
-          const latestItem = this.basket.pop()!;
-          this.items.push(...this.basket);
-          this.basket = [latestItem];
-        }
       } else {
         transferArrayItem(
           event.previousContainer.data,
@@ -86,36 +108,43 @@ export class PreIntermediateLevelComponent {
         );
       }
     }
-
-    console.log('Items after drop:', this.items);
-    console.log('Basket after drop:', this.basket);
-
     this.checkAnswer();
   }
 
   checkAnswer() {
-    if (this.basket.length === 1 && this.basket[0] === this.searchItem) {
+    const correctCount = this.dataList[this.counter].correctCount;
+    if (this.basket.length === 1 && parseInt(this.basket[0]) === correctCount) {
       this.itemFound = true;
+      this.wrongAnswerCount = 0;
     } else {
       this.itemFound = false;
+      this.wrongAnswerCount += 1;
     }
+
     this.setAlerts(this.itemFound);
+    if (this.wrongAnswerCount >= 2) {
+      this.showErrorDialog();
+    }
   }
 
   setAlerts(answer: boolean) {
     this.isAnswerCorrect = answer;
-
-    this.openAnimationDialog(answer);
+    this.openAnimationDialog(
+      answer,
+      answer ?
+        'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fhappy-start.webm?alt=media&token=f369ae30-66d3-4642-9c03-8405c18bf203' :
+        'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/emoji-animations%2Fnot-correct.webm?alt=media&token=fc447df6-587a-4429-a56e-9f178fe12073'
+    );
 
     if (answer) {
       this.awardMarks();
       setTimeout(() => {
         this.moveToNext();
-      }, 3500);
+      }, 3000);
     } else {
       setTimeout(() => {
         this.reset();
-      }, 3500);
+      }, 3000);
     }
   }
 
@@ -125,7 +154,7 @@ export class PreIntermediateLevelComponent {
     console.log('=== CORRECT ANSWER LOGGED ===');
     console.log('User UID:', this.userUid);
     console.log('Question Number:', this.counter + 1);
-    console.log('Correct Answer:', this.searchItem);
+    console.log('Correct Answer:', this.dataList[this.counter].correctCount);
     console.log('Marks Awarded:', this.maxMarksPerQuestion);
     console.log('Total Marks:', this.totalMarks);
     console.log('Timestamp:', new Date().toISOString());
@@ -138,11 +167,11 @@ export class PreIntermediateLevelComponent {
     const answerLog = {
       userUid: this.userUid,
       questionNumber: this.counter + 1,
-      correctAnswer: this.searchItem,
+      correctAnswer: this.dataList[this.counter].correctCount,
       marksAwarded: this.maxMarksPerQuestion,
       totalMarks: this.totalMarks,
       timestamp: new Date().toISOString(),
-      gameType: 'pre-intermediate-level'
+      gameType: 'intermediate-level'
     };
 
     if (this.userUid) {
@@ -156,15 +185,25 @@ export class PreIntermediateLevelComponent {
     }
   }
 
-  private openAnimationDialog(isCorrect: boolean): void {
+  private showErrorDialog(): void {
+    const dialogRef = this.dialog.open(ErrorDialogComponent, {
+      width: '300px'
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('Error dialog closed');
+      this.reset();
+    });
+  }
+
+  private openAnimationDialog(isCorrect: boolean, animationUrl: string): void {
     const dialogRef = this.dialog.open(AnimationDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100vh',
       width: '100vw',
       panelClass: 'fullscreen-dialog',
-      disableClose: true,
-      data: { isCorrect }
+      data: {isCorrect, animationUrl}
     });
 
     dialogRef.afterClosed().subscribe(() => {
@@ -172,45 +211,30 @@ export class PreIntermediateLevelComponent {
     });
   }
 
-  dataList: any = [
-    {
-      itemlist: ['3', '2', '4'],
-      searchItem: '3',
-      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
-    },
-    {
-      itemlist: ['5', '2', '4'],
-      searchItem: '4',
-      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
-    },
-    {
-      itemlist: ['5', '2', '1', '4', '3'],
-      searchItem: '5',
-      image: 'https://firebasestorage.googleapis.com/v0/b/beekideeapp.appspot.com/o/new-tree.png?alt=media&token=84dee878-9293-439c-91c3-ad9a76c3c81e'
-    },
-  ];
-
   start() {
-    this.gameStartTime = new Date().toISOString(); // Set game start time
-    this.items = this.shuffleArray([...this.dataList[0].itemlist]);
+    this.gameStartTime = new Date().toISOString();
+    this.items = this.shuffleArray(['1', '4', '5', '7']);
     this.searchItem = this.dataList[0].searchItem;
     this.isStarted = true;
     this.basket = [];
     this.totalMarks = 0;
+    this.errorMessage = '';
     const outerDiv = document.querySelector('.outer');
     if (outerDiv) {
       outerDiv.classList.add('started');
     }
-
-    console.log('Game started by user:', this.userUid);
   }
 
   moveToNext() {
     if (this.counter + 1 < this.dataList.length) {
       this.counter += 1;
       this.reset();
-      this.items = this.shuffleArray([...this.dataList[this.counter].itemlist]);
+      this.items = this.shuffleArray(['1', '4', '5', '7']);
       this.searchItem = this.dataList[this.counter].searchItem;
+      const outerDiv = document.querySelector('.outer');
+      if (outerDiv) {
+        outerDiv.classList.add('started');
+      }
     } else {
       this.logGameCompletion();
       this.reset();
@@ -218,7 +242,6 @@ export class PreIntermediateLevelComponent {
   }
 
   finishGame(): void {
-    console.log('Game finished manually by user:', this.userUid);
     this.logGameCompletion();
     this.reStartGame();
   }
@@ -231,20 +254,6 @@ export class PreIntermediateLevelComponent {
       const accuracy = questionsAttempted > 0 ? (correctAnswers / questionsAttempted) * 100 : 0;
       const isNaturalCompletion = questionsAttempted === this.dataList.length;
 
-      console.log('=== GAME COMPLETED ===');
-      console.log('User UID:', this.userUid);
-      console.log('Questions Attempted:', questionsAttempted);
-      console.log('Correct Answers:', correctAnswers);
-      console.log('Final Total Marks:', this.totalMarks);
-      console.log('Total Questions Available:', this.dataList.length);
-      console.log('Max Possible Marks:', this.dataList.length * this.maxMarksPerQuestion);
-      console.log('Accuracy:', accuracy.toFixed(2) + '%');
-      console.log('Overall Percentage:', ((this.totalMarks / (this.dataList.length * this.maxMarksPerQuestion)) * 100).toFixed(2) + '%');
-      console.log('Completion Time:', gameEndTime);
-      console.log('Game Status:', isNaturalCompletion ? 'Completed All Questions' : 'Finished Early');
-      console.log('Completion Method:', isNaturalCompletion ? 'Natural' : 'Manual');
-      console.log('=====================');
-
       const gameResult = {
         userUid: this.userUid,
         questionsAttempted: questionsAttempted,
@@ -256,7 +265,7 @@ export class PreIntermediateLevelComponent {
         totalQuestions: this.dataList.length,
         completionTime: gameEndTime,
         gameStartTime: this.gameStartTime,
-        gameType: 'pre-intermediate-level',
+        gameType: 'intermediate-level',
         gameStatus: isNaturalCompletion ? 'completed_all' : 'finished_early',
         completionMethod: isNaturalCompletion ? 'natural' : 'manual'
       };
@@ -275,6 +284,8 @@ export class PreIntermediateLevelComponent {
     this.isAnswerCorrect = false;
     this.itemFound = false;
     this.basket = [];
+    this.errorMessage = '';
+    this.wrongAnswerCount = 0;
   }
 
   reStartGame() {
@@ -290,6 +301,11 @@ export class PreIntermediateLevelComponent {
       outerDiv.classList.remove('started');
     }
   }
+
+  onImageError(event: Event) {
+    this.errorMessage = 'Error loading image. Please check the URL or try again later.';
+  }
+
   private shuffleArray(array: string[]): string[] {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -299,19 +315,7 @@ export class PreIntermediateLevelComponent {
     return shuffled;
   }
 
-
-  getTreeCount(): number {
-    if (this.counter === 0) return 3;
-    if (this.counter === 1) return 4;
-    if (this.counter === 2) return 5;
-    return 3; // Default to 3 if counter is out of bounds
-  }
-
-  getTreeArray(): number[] {
-    return Array(this.getTreeCount()).fill(0).map((_, index) => index);
-  }
-
-  openSaveResultDialog() {
+  openSaveResultDialog(): void {
     const dialogRef = this.dialog.open(SaveResultsPopUpComponent);
 
     dialogRef.afterClosed().subscribe(result => {
@@ -323,4 +327,5 @@ export class PreIntermediateLevelComponent {
       }
     });
   }
+
 }

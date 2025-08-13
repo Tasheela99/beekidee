@@ -1,33 +1,33 @@
 <div class="container-fluid w-100">
   <div class="row">
     <div class="col-12 col-lg-12 left">
-      <!-- Camera component -->
-      <!-- <app-draggable-camera *ngIf="showCamera"></app-draggable-camera> -->
-
       <!-- Lessons Section -->
       <div class="kindergarten-container">
         <div class="row">
           <div class="col-12 my-2">
             <div class="container">
-              <!-- Lesson Title -->
+              <!-- Enhanced Lesson Title -->
               <div class="row mb-4">
                 <div class="col-12 text-center">
                   <h1 class="kindergarten-title">
                     🌟 විනෝදජනක ඉගෙනුම් වීඩියෝ 🌟
                   </h1>
                   <div class="decorative-line"></div>
+                  <p style="font-family: 'Fredoka', cursive; font-size: 1.2rem; color: #666; margin-top: 15px;">
+                    📚 ඔබේ ප්‍රියතම පාඩම තෝරා ගෙන ඉගෙනීමේ ගමන ආරම්භ කරන්න! 🚀
+                  </p>
                 </div>
               </div>
 
-              <!-- Carousel Section -->
+              <!-- Enhanced Carousel Section -->
               <div class="row">
                 <div class="col-12">
                   <div class="carousel-wrapper">
                     <h2 class="section-title">
-                      🎬 ඔබේ ගමන තෝරන්න!
+                      🎬 ඔබේ මාවත තෝරන්න! 🎯
                     </h2>
                     <owl-carousel-o [options]="customOptions" class="kindergarten-carousel">
-                      <ng-template carouselSlide *ngFor="let lesson of lessons">
+                      <ng-template carouselSlide *ngFor="let lesson of lessons; let i = index">
                         <mat-card
                           appearance="outlined"
                           (click)="selectLesson(lesson)"
@@ -36,11 +36,16 @@
                           <div class="card-decoration"></div>
                           <mat-card-header>
                             <mat-card-title class="lesson-title">
-                              {{ lesson.title }}
+                              🎭 {{ lesson.title }}
                             </mat-card-title>
                           </mat-card-header>
                           <mat-card-content>
                             <p class="lesson-description">{{ lesson.description }}</p>
+                            <div style="text-align: center; margin-top: 15px;">
+                              <span style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                                {{ i + 1 }} වන පාඩම
+                              </span>
+                            </div>
                           </mat-card-content>
                         </mat-card>
                       </ng-template>
@@ -49,7 +54,7 @@
                 </div>
               </div>
 
-              <!-- Video Player Section -->
+              <!-- Enhanced Video Player Section -->
               <div class="my-2 row">
                 <div class="col-12 d-flex align-items-center justify-content-center video-section">
                   <mat-card
@@ -58,7 +63,9 @@
                     *ngIf="selectedLesson">
                     <div class="video-card-decoration"></div>
                     <mat-card-content class="video-content">
-                      <p class="video-subtitle">{{ selectedLesson.subtitle }}</p>
+                      <p class="video-subtitle">
+                        🎥 {{ selectedLesson.subtitle }} 🍿
+                      </p>
                       <div class="video-wrapper">
                         <video
                           width="100%"
@@ -70,15 +77,25 @@
                           ඔබේ බ්‍රව්සරය මෙම වීඩියෝව ප්‍රදර්ශනය නොකරයි.
                         </video>
                       </div>
+                      <div style="text-align: center; margin-top: 20px;">
+                        <p style="font-family: 'Fredoka', cursive; color: #4ecdc4; font-size: 1.1rem;">
+                          🌟 වීඩියෝව නැරඹීමෙන් පසු පහළ ක්‍රියාකාරකම් වලට යන්න! 🎯
+                        </p>
+                      </div>
                     </mat-card-content>
                   </mat-card>
-                  <!-- Placeholder when no video is selected -->
+                  <!-- Enhanced Placeholder -->
                   <div class="no-video-placeholder w-100" *ngIf="!selectedLesson">
                     <div class="placeholder-content">
                       <div class="placeholder-icon">🎬</div>
-                      <h3>නරඹන්න සවිස්තර වීඩියෝවක් තෝරන්න</h3>
-                      <p>ඉහත පාඩමක ක්ලික් කිරීමෙන් ඔබගේ ඉගෙනීම ආරම්භ කරන්න</p>
+                      <h3>🌈 නරඹන්න වීඩියෝවක් තෝරන්න! 🌈</h3>
+                      <p>
+                        ✨ ඉහත කාඩ්පතකට ක්ලික් කිරීමෙන් ඔබගේ ඉගෙනීමේ ගමන ආරම්භ කරන්න ✨
+                      </p>
                       <div class="bouncing-arrow">👆</div>
+                      <div style="margin-top: 15px;">
+                        <span style="font-size: 1.5rem;">🎨 🎪 🎭 🎯 🌟</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -87,10 +104,13 @@
           </div>
         </div>
       </div>
-      <!-- Router Outlet for Additional Content -->
+      
+      <!-- Enhanced Router Outlet -->
       <div class="row mt-4">
         <div class="col-12">
-          <router-outlet></router-outlet>
+          <div style="background: rgba(255, 255, 255, 0.1); border-radius: 20px; backdrop-filter: blur(10px); min-height: 100px;">
+            <router-outlet></router-outlet>
+          </div>
         </div>
       </div>
     </div>
